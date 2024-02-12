@@ -1,5 +1,5 @@
 import request from "supertest";
-import { HTTP_STATUS } from "../../src/index";
+import { HTTP_STATUS } from "../../src/status/status";
 import { app } from "../../src/setting";
 import { response } from "express";
 
@@ -7,6 +7,8 @@ describe("/blogs", () => {
   beforeAll(async () => {
     await request(app).delete("/testing/all-data");
   });
+
+  afterAll(done => done())
 
   it("should return 200 and empty array", async () => {
     await request(app).get("/blogs").expect(HTTP_STATUS.OK_200, []);

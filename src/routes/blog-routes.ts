@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
 import { blogValidator } from "../validators/blog-validators";
 import { BlogRepository } from "../repositories/blog-repository";
-import { HTTP_STATUS } from "..";
+import { HTTP_STATUS } from "../status/status";
 import { BlogType } from "../models/blogs";
 
 export const blogRoute = Router({});

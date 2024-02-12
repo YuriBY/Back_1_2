@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
-import { HTTP_STATUS } from "..";
+import { HTTP_STATUS } from "../status/status";
 import { PostType } from "../models/postType";
 import { PostRepository } from "../repositories/post-repository";
 import { postValidation } from "../validators/post-validator";

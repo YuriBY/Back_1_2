@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { HTTP_STATUS } from ".";
+import { HTTP_STATUS } from "../src/status/status";
 import { blogRoute } from "./routes/blog-routes";
 import { postRoute } from "./routes/post-routes";
 import { db } from "./db/db";

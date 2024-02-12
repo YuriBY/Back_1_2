@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HTTP_STATUS } from "../..";
+import { HTTP_STATUS } from "../../status/status";
 
 const login1 = "admin";
 const pass1 = "qwerty";

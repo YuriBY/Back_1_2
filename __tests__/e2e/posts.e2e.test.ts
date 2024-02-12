@@ -1,5 +1,5 @@
 import request from "supertest";
-import { HTTP_STATUS } from "../../src";
+import { HTTP_STATUS } from "../../src/status/status";
 import { app } from "../../src/setting";
 import { response } from "express";
 import { db } from "../../src/db/db";
