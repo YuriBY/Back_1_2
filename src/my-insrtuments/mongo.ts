@@ -2,7 +2,10 @@
 
 // в папке mongodb/bin создать data/db
 
-// запуск сервиса mongod.exe --dbpath ./data/bin
+// запуск сервиса mongod.exe --dbpath ./data/db
 
 // во втором терминале соединиться с бд
 // ./mongo​
+
+// заспуск mongoshell для соединения с запущенным сервисом
+// mongodb://localhost/
