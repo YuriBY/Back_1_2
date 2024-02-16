@@ -1,7 +1,7 @@
 import { body } from "express-validator";
-import { BlogRepository } from "../repositories/blog-repository";
+import { blogRepository } from "../repositories/blog-repository";
 import { inputValidationMiddleware } from "../middleweares/input-validation/input-validation-middleware";
-import { PostRepository } from "../repositories/post-repository";
+
 
 const titleValidator = body("title")
   .trim()
@@ -20,7 +20,7 @@ const contentVAlidator = body("content")
 
 const blogIdVAlidator = body("blogId")
   .custom((value) => {
-    const blog = BlogRepository.getById(value);
+    const blog = blogRepository.getById(value);
 
     if (!blog) {
       throw Error;

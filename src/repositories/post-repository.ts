@@ -1,21 +1,21 @@
 import { db } from "../db/db";
 import { PostType } from "../models/postType";
 
-export class PostRepository {
-  static getAll() {
+export const postRepository = {
+  getAll() {
     return db.posts;
-  }
-
-  static getById(id: Number) {
+  },
+  
+  getById(id: Number) {
     return db.posts.find((b) => +b.id === +id);
-  }
-
-  static createPost(createData: PostType) {
+  },
+  
+  createPost(createData: PostType) {
     db.posts.push(createData);
-    return createData;
-  }
-
-  static updatePost(
+     return createData;
+  },
+  
+  updatePost(
     id: Number,
     title: string,
     shortDescription: string,
@@ -25,15 +25,16 @@ export class PostRepository {
     const foundPost = db.posts.find((b) => +b.id === id)!;
     foundPost.title = title;
     (foundPost.shortDescription = shortDescription),
-      (foundPost.content = content),
-      (foundPost.blogId = blogId);
-  }
-
-  static deletePost(id: Number) {
+    (foundPost.content = content),
+    (foundPost.blogId = blogId);
+  },
+  
+  deletePost(id: Number) {
     db.posts = db.posts.filter((b) => +b.id !== id);
-  }
-
-  static deleteAllPosts() {
+  },
+  
+  deleteAllPosts() {
     db.posts = [];
   }
-}
+  }
+  

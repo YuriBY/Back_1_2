@@ -1,7 +1,8 @@
 import request from "supertest";
-import { HTTP_STATUS } from "../../src/status/status";
+
 import { app } from "../../src/setting";
 import { response } from "express";
+import { HTTP_STATUS } from "../../src/status/status1";
 
 describe("/blogs", () => {
   beforeAll(async () => {
