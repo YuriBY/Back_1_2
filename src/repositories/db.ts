@@ -11,12 +11,8 @@ if (!mongoURI) {
 
 export const client = new MongoClient(mongoURI);
 
-export const blogsCollection = client
-  .db("project")
-  .collection<BlogType>("blogs");
-export const postCollection = client
-  .db("project")
-  .collection<PostType>("posts");
+export const blogsCollection = client.db().collection<BlogType>("blogs");
+export const postCollection = client.db().collection<PostType>("posts");
 
 export async function runDB() {
   try {
