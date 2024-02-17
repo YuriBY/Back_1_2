@@ -9,3 +9,9 @@
 
 // заспуск mongoshell для соединения с запущенным сервисом
 // mongodb://localhost/
+
+// установка mongodb в проект
+// yarn add mongodb
+
+// установка dotenv
+// yarn add dotenv --dev

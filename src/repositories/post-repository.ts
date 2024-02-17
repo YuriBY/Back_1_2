@@ -1,40 +1,45 @@
-import { db } from "../db/db";
 import { PostType } from "../models/postType";
+import { client, postCollection } from "./db";
 
 export const postRepository = {
-  getAll() {
-    return db.posts;
+  async getAll() {
+    return postCollection.find({}).toArray();
   },
-  
-  getById(id: Number) {
-    return db.posts.find((b) => +b.id === +id);
+
+  async getById(id: string) {
+    return await postCollection.findOne({ id: id });
   },
-  
-  createPost(createData: PostType) {
-    db.posts.push(createData);
-     return createData;
+
+  async createPost(createData: PostType) {
+    const { id, title, shortDescription, content, blogId, blogName } =
+      createData;
+    const result = await postCollection.insertOne({
+      id,
+      title,
+      shortDescription,
+      content,
+      blogId,
+      blogName,
+    });
+    return { ...createData, _id: result.insertedId };
   },
-  
-  updatePost(
-    id: Number,
+
+  async updatePost(
+    id: string,
     title: string,
     shortDescription: string,
     content: string,
     blogId: string
   ) {
-    const foundPost = db.posts.find((b) => +b.id === id)!;
-    foundPost.title = title;
-    (foundPost.shortDescription = shortDescription),
-    (foundPost.content = content),
-    (foundPost.blogId = blogId);
+    const result = await postCollection.updateOne(
+      { id: id },
+      { $set: { title, shortDescription, content, blogId } }
+    );
+    return result.matchedCount === 1;
   },
-  
-  deletePost(id: Number) {
-    db.posts = db.posts.filter((b) => +b.id !== id);
+
+  async deletePost(id: string) {
+    const result = await postCollection.deleteOne({ id: id });
+    return result.deletedCount === 1;
   },
-  
-  deleteAllPosts() {
-    db.posts = [];
-  }
-  }
-  
+};

@@ -1,37 +1,43 @@
-import { db } from "../db/db";
 import { BlogType } from "../models/blogs";
+import { blogsCollection, client } from "./db";
 
 export const blogRepository = {
-  getAll() {
-    return db.blogs
+  async getAll() {
+    return blogsCollection.find({}).toArray();
   },
 
-  getById(id: Number) {
-    return db.blogs.find((b) => +b.id === +id);
+  async getById(id: string) {
+    return await blogsCollection.findOne({
+      id: id,
+    });
   },
-    
-  createBlog(createData: BlogType) {
-    db.blogs.push(createData);
-    return createData;
+
+  async createBlog(createData: BlogType) {
+    const { id, name, description, websiteUrl } = createData;
+    const result = await blogsCollection.insertOne({
+      id,
+      name,
+      description,
+      websiteUrl,
+    });
+    return { ...createData, _id: result.insertedId };
   },
-    
-  updateBlog(
-    id: Number,
+
+  async updateBlog(
+    id: string,
     name: string,
     description: string,
     websiteUrl: string
   ) {
-      const foundBlog = db.blogs.find((b) => +b.id === id)!;
-      foundBlog.name = name;
-      foundBlog.description = description;
-      foundBlog.websiteUrl = websiteUrl;
-      },
-    
-  deleteBlog(id: Number) {
-    db.blogs = db.blogs.filter((b) => +b.id !== id);
+    const result = await blogsCollection.updateOne(
+      { id: id },
+      { $set: { name, description, websiteUrl } }
+    );
+    return result.matchedCount === 1;
   },
-    
-  deleteAllBlogs() {
-    db.blogs = [];
-      }
-}
+
+  async deleteBlog(id: string) {
+    const result = await blogsCollection.deleteOne({ id: id });
+    return result.deletedCount === 1;
+  },
+};
