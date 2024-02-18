@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
 import { blogValidator } from "../validators/blog-validators";
 import { blogRepository } from "../repositories/blog-repository";
-import { BlogType } from "../models/blogs";
+import { BlogCreateType, BlogOutputType } from "../models/blogs";
 import { HTTP_STATUS } from "../status/status1";
 
 export const blogRoute = Router({});
@@ -26,14 +26,12 @@ blogRoute.post(
   authMiddlewear,
   blogValidator(),
   async (req: Request, res: Response) => {
-    const { name, description, websiteUrl } = req.body;
-    const newBlog: BlogType = {
-      id: new Date().getTime().toString(),
-      name: name,
-      description: description,
-      websiteUrl: websiteUrl,
-    };
-    const createdBlog: BlogType = await blogRepository.createBlog(newBlog);
+    const { name, description, websiteUrl }: BlogCreateType = req.body;
+    const createdBlog: BlogOutputType = await blogRepository.createBlog({
+      name,
+      description,
+      websiteUrl,
+    });
     res.status(HTTP_STATUS.CREATED_201).send(createdBlog);
   }
 );
@@ -43,7 +41,7 @@ blogRoute.put(
   authMiddlewear,
   blogValidator(),
   async (req: Request, res: Response) => {
-    const blog = blogRepository.getById(req.params.id);
+    const blog = await blogRepository.getById(req.params.id);
     if (!blog) {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     } else {

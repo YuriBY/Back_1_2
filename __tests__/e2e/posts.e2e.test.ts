@@ -1,8 +1,5 @@
 import request from "supertest";
-
-import { app } from "../../src/setting";
-import { response } from "express";
-import { db } from "../../src/db/db";
+import { app } from "../../src/index";
 import { HTTP_STATUS } from "../../src/status/status1";
 
 describe("/posts", () => {

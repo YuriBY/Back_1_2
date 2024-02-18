@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
-import { PostType } from "../models/postType";
+import { PostCreateType, PostDBType } from "../models/postType";
 import { postRepository } from "../repositories/post-repository";
 import { postValidation } from "../validators/post-validator";
 import { HTTP_STATUS } from "../status/status1";
@@ -27,15 +27,12 @@ postRoute.post(
   postValidation(),
   async (req: Request, res: Response) => {
     const { title, shortDescription, content, blogId } = req.body;
-    const newPost: PostType = {
-      id: new Date().getTime().toString(),
+    const createdPost: PostCreateType = await postRepository.createPost({
       title,
       shortDescription,
       content,
       blogId,
-      blogName: "New name",
-    };
-    const createdPost: PostType = await postRepository.createPost(newPost);
+    });
     res.status(HTTP_STATUS.CREATED_201).send(createdPost);
   }
 );

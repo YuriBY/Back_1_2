@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { BlogType } from "./../models/blogs";
-import { PostType } from "./../models/postType";
+import { BlogDBType } from "./../models/blogs";
+import { PostDBType } from "./../models/postType";
 import { MongoClient } from "mongodb";
 
 const mongoURI = process.env.MONGO_URL;
@@ -11,8 +11,8 @@ if (!mongoURI) {
 
 export const client = new MongoClient(mongoURI);
 
-export const blogsCollection = client.db().collection<BlogType>("blogs");
-export const postCollection = client.db().collection<PostType>("posts");
+export const blogsCollection = client.db().collection<BlogDBType>("blogs");
+export const postCollection = client.db().collection<PostDBType>("posts");
 
 export async function runDB() {
   try {
