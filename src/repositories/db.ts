@@ -3,7 +3,7 @@ import { BlogDBType } from "./../models/blogs";
 import { PostDBType } from "./../models/postType";
 import { MongoClient } from "mongodb";
 
-const mongoURI = process.env.MONGO_URL;
+const mongoURI = process.env.MONGO_URL || "mongodb://localhost:27017";
 
 if (!mongoURI) {
   throw new Error("!URL does not found");

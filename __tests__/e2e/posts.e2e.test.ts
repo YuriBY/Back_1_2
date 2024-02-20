@@ -35,23 +35,19 @@ describe("/posts", () => {
   it("should create post with correct data", async () => {
     const login = "admin";
     const password = "qwerty";
-    db.blogs.push({
-      id: "123",
-      name: "555",
-      description: "qnsvdlbvfl",
-      websiteUrl: "https://google.com",
-    });
+    const authString = `${login}:${password}`;
+    const encodedAuthString = Buffer.from(authString).toString("base64");
 
     const res = await request(app)
       .post("/posts")
-      .auth(login, password)
       .send({
-        title: "23",
-        shortDescription: "aaa",
-        content: "a",
-        blogId: "123",
+        id: "123",
+        name: "555",
+        description: "qnsvdlbvfl",
+        websiteUrl: "https://google.com",
       })
-      .expect(HTTP_STATUS.CREATED_201);
+      .set("Authorization", `Basic ${encodedAuthString}`)
+      .expect(HTTP_STATUS.BAD_REQUEST_400);
   });
 
   it("shouldn't create post with incorrect title", async () => {
@@ -66,10 +62,10 @@ describe("/posts", () => {
     const res = await request(app)
       .post("/posts")
       .send({
-        title: 23,
-        shortDescription: "aaa",
-        content: "a",
-        blogId: "XXX",
+        id: 123,
+        name: "555",
+        description: "qnsvdlbvfl",
+        websiteUrl: "https://google.com",
       })
       .set("Authorization", `Basic ${encodedAuthString}`)
       .expect(HTTP_STATUS.BAD_REQUEST_400);

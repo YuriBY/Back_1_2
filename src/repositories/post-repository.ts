@@ -27,17 +27,7 @@ export const postRepository = {
     };
   },
 
-  async createPost(createData: PostCreateType): Promise<PostOutType> {
-    const { title, shortDescription, content, blogId } = createData;
-    const newPost: PostDBType = {
-      _id: crypto.randomUUID(),
-      title,
-      shortDescription,
-      content,
-      blogId,
-      blogName: "New name",
-      createdAt: new Date().toISOString(),
-    };
+  async createPost(newPost: PostDBType): Promise<PostOutType> {
     const result = await postCollection.insertOne(newPost);
     return this.postMapper(newPost);
   },

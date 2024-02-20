@@ -1,7 +1,5 @@
-import { run } from "node:test";
 import { BlogCreateType, BlogDBType, BlogOutputType } from "../models/blogs";
 import { blogsCollection } from "./db";
-import crypto from "crypto";
 
 export const blogRepository = {
   async getAll(): Promise<BlogOutputType[] | []> {
@@ -29,16 +27,7 @@ export const blogRepository = {
     return this.blogMapper(result);
   },
 
-  async createBlog(createData: BlogCreateType): Promise<BlogOutputType> {
-    const { name, description, websiteUrl } = createData;
-    const newBlog: BlogDBType = {
-      _id: crypto.randomUUID(),
-      name,
-      description,
-      websiteUrl,
-      createdAt: new Date().toISOString(),
-      isMembership: false,
-    };
+  async createBlog(newBlog: BlogDBType): Promise<BlogOutputType> {
     const result = await blogsCollection.insertOne(newBlog);
     return this.blogMapper(newBlog);
   },

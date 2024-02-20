@@ -12,8 +12,6 @@ app.use(jsonBodyMiddlewear);
 
 const port = process.env.PORT || 5000;
 
-// const port = 5000;
-
 app.use("/blogs", blogRoute);
 app.use("/posts", postRoute);
 

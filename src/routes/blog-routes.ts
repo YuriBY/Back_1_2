@@ -1,19 +1,19 @@
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
 import { blogValidator } from "../validators/blog-validators";
-import { blogRepository } from "../repositories/blog-repository";
 import { BlogCreateType, BlogOutputType } from "../models/blogs";
 import { HTTP_STATUS } from "../status/status1";
+import { blogService } from "../domain/blog-service";
 
 export const blogRoute = Router({});
 
 blogRoute.get("/", async (req: Request, res: Response) => {
-  const blogs = await blogRepository.getAll();
+  const blogs = await blogService.getAll();
   res.send(blogs);
 });
 
 blogRoute.get("/:id", async (req: Request, res: Response) => {
-  const blog = await blogRepository.getById(req.params.id);
+  const blog = await blogService.getById(req.params.id);
   if (blog) {
     res.send(blog);
   } else {
@@ -27,7 +27,7 @@ blogRoute.post(
   blogValidator(),
   async (req: Request, res: Response) => {
     const { name, description, websiteUrl }: BlogCreateType = req.body;
-    const createdBlog: BlogOutputType = await blogRepository.createBlog({
+    const createdBlog: BlogOutputType = await blogService.createBlog({
       name,
       description,
       websiteUrl,
@@ -41,13 +41,13 @@ blogRoute.put(
   authMiddlewear,
   blogValidator(),
   async (req: Request, res: Response) => {
-    const blog = await blogRepository.getById(req.params.id);
+    const blog = await blogService.getById(req.params.id);
     if (!blog) {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     } else {
       const { name, description, websiteUrl } = req.body;
       const id = req.params.id;
-      const updatedBlog = await blogRepository.updateBlog(
+      const updatedBlog = await blogService.updateBlog(
         id,
         name,
         description,
@@ -62,11 +62,11 @@ blogRoute.delete(
   "/:id",
   authMiddlewear,
   async (req: Request, res: Response) => {
-    const blog = await blogRepository.getById(req.params.id);
+    const blog = await blogService.getById(req.params.id);
     if (!blog) {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
     } else {
-      blogRepository.deleteBlog(req.params.id);
+      blogService.deleteBlog(req.params.id);
       res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
     }
   }
