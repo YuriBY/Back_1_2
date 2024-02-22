@@ -2,10 +2,12 @@ import { BlogCreateType, BlogDBType, BlogOutputType } from "../models/blogs";
 import { blogsCollection } from "./db";
 
 export const blogRepository = {
-  async getAll(): Promise<BlogOutputType[] | []> {
-    const result: BlogDBType[] = await blogsCollection.find({}).toArray();
-    if (!result) return [];
-    return result.map(({ _id, ...rest }) => ({ id: _id, ...rest }));
+  async getById(id: string): Promise<BlogDBType | null> {
+    const result: BlogDBType | null = await blogsCollection.findOne({
+      _id: id,
+    });
+    if (!result) return null;
+    return result;
   },
 
   blogMapper(blog: BlogDBType): BlogOutputType {
@@ -17,14 +19,6 @@ export const blogRepository = {
       createdAt: blog.createdAt,
       isMembership: blog.isMembership,
     };
-  },
-
-  async getById(id: string): Promise<BlogOutputType | null> {
-    const result: BlogDBType | null = await blogsCollection.findOne({
-      _id: id,
-    });
-    if (!result) return null;
-    return this.blogMapper(result);
   },
 
   async createBlog(newBlog: BlogDBType): Promise<BlogOutputType> {

@@ -24,14 +24,14 @@ export const postService = {
   },
 
   async createPost(createData: PostCreateType): Promise<PostOutType> {
-    const { title, shortDescription, content, blogId } = createData;
+    const { title, shortDescription, content, blogId, blogName } = createData;
     const newPost: PostDBType = {
       _id: crypto.randomUUID(),
       title,
       shortDescription,
       content,
       blogId,
-      blogName: "New name",
+      blogName: blogName ? blogName : "New name",
       createdAt: new Date().toISOString(),
     };
     const createdPost = await postRepository.createPost(newPost);

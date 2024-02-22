@@ -15,6 +15,7 @@ export type PostCreateType = {
   shortDescription: string;
   content: string;
   blogId: string;
+  blogName?: string;
 };
 
 export type PostOutType = {

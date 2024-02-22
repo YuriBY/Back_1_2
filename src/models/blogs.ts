@@ -1,4 +1,13 @@
-import { ObjectId } from "mongodb";
+import { Request, Response } from "express";
+
+export type ParamType = {
+  id: string;
+};
+export type RequestWithQuery<Q> = Request<{}, {}, {}, Q>;
+export type RequestWithBody<T> = Request<{}, {}, T, {}>;
+export type RequestWithBodyAndParams<P, T> = Request<P, {}, T, {}>;
+
+export type ResponseType<T> = Response<T, {}>;
 
 export type BlogDBType = {
   _id: string;
@@ -22,4 +31,26 @@ export type BlogOutputType = {
   websiteUrl: string;
   createdAt: string;
   isMembership: boolean;
+};
+
+export type BlogQueryInputType = {
+  searchNameTerm?: string;
+  sortBy?: string;
+  sortDirection?: string;
+  pageNumber?: number;
+  pageSize?: number;
+};
+
+export type Pagination<I> = {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: I[];
+};
+
+export type CreatePostInBlogInputType = {
+  title: string;
+  shortDescription: string;
+  content: string;
 };
