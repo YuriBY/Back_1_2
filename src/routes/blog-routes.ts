@@ -14,15 +14,13 @@ import {
   ResponseType,
 } from "../models/blogs";
 import { HTTP_STATUS } from "../status/status1";
-import { blogService } from "../domain/blog-service";
-import { blogQueryRepository } from "../repositories/blogQueryrepository";
-import { ObjectId, SortDirection } from "mongodb";
-import crypto from "crypto";
+import { blogService } from "../services/blog-service";
 import { blogRepository } from "../repositories/blog-repository";
-import { postService } from "../domain/post-service";
+import { postService } from "../services/post-service";
 import { postRepository } from "../repositories/post-repository";
 import { PostDBType, PostOutType } from "../models/postType";
 import { postQueryRepository } from "../repositories/postQueryrepository";
+import { blogQueryRepository } from "../repositories/blogQueryRepository";
 
 export const blogRoute = Router({});
 
@@ -35,7 +33,7 @@ blogRoute.get(
     const sortData = {
       searchNameTerm: req.query.searchNameTerm ?? null,
       sortBy: req.query.sortBy ?? "createdAt",
-      sortDirection: (req.query.sortDirection as SortDirection) ?? "desc",
+      sortDirection: req.query.sortDirection ?? "desc",
       pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
       pageSize: req.query.pageSize ? +req.query.pageSize : 10,
     };
@@ -59,11 +57,14 @@ blogRoute.post(
   blogValidator(),
   async (req: Request, res: Response) => {
     const { name, description, websiteUrl }: BlogCreateType = req.body;
-    const createdBlog: BlogOutputType = await blogService.createBlog({
+    const createdBlog: BlogOutputType | null = await blogService.createBlog({
       name,
       description,
       websiteUrl,
     });
+    if (!createdBlog) {
+      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+    }
     res.status(HTTP_STATUS.CREATED_201).send(createdBlog);
   }
 );
@@ -77,45 +78,26 @@ blogRoute.post(
     res: Response
   ) => {
     const id = req.params.id;
-    const { title, shortDescription, content }: CreatePostInBlogInputType =
-      req.body;
-
+    
     const isValidUUID = require("uuid-validate");
     if (!isValidUUID(id)) {
       res.send(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
 
-    const blog = await blogRepository.getById(id);
-    if (!blog) {
-      res.send(HTTP_STATUS.BAD_REQUEST_400);
-      return;
+    const createPostFromBlogModel = {
+      title: req.body.title,
+      shortDescription: req.body.shortDescription,
+      content: req.body.content
     }
 
-    const newPost: PostDBType = {
-      _id: crypto.randomUUID(),
-      title,
-      content,
-      shortDescription,
-      blogId: id,
-      blogName: blog.name,
-      createdAt: new Date().toISOString(),
-    };
-
-    const createdPost: PostOutType = await postRepository.createPost(newPost);
-
-    if (!createdPost) {
-      res.send(HTTP_STATUS.BAD_REQUEST_400);
-      return;
-    }
-
-    const post: PostOutType = await postQueryRepository.getById(createdPost.id);
+    const post : PostOutType | null = await blogService.createPostToBlog(id, createPostFromBlogModel )
 
     if (!post) {
-      res.send(HTTP_STATUS.BAD_REQUEST_400);
-      return;
+      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400)
+      return
     }
-    res.status(HTTP_STATUS.CREATED_201).send(post);
+    res.status(HTTP_STATUS.CREATED_201).send(post)
   }
 );
 
@@ -123,34 +105,42 @@ blogRoute.put(
   "/:id",
   authMiddlewear,
   blogValidator(),
-  async (req: Request, res: Response) => {
-    const blog = await blogService.getById(req.params.id);
-    if (!blog) {
-      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
-    } else {
+  async (req: RequestWithBodyAndParams<ParamType, BlogCreateType>, res: Response) => {
+    const id = req.params.id;
+    const isValidUUID = require("uuid-validate");
+    if (!isValidUUID(id)) {
+      res.send(HTTP_STATUS.BAD_REQUEST_400);
+      return;
+    }
       const { name, description, websiteUrl } = req.body;
-      const id = req.params.id;
       const updatedBlog = await blogService.updateBlog(
         id,
         name,
         description,
         websiteUrl
       );
+      if (!updatedBlog) {
+        res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+        return
+      }
       res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
     }
-  }
-);
+  );
 
 blogRoute.delete(
   "/:id",
   authMiddlewear,
   async (req: Request, res: Response) => {
-    const blog = await blogService.getById(req.params.id);
-    if (!blog) {
-      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
-    } else {
-      blogService.deleteBlog(req.params.id);
-      res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+    const id = req.params.id;
+    const isValidUUID = require("uuid-validate");
+    if (!isValidUUID(id)) {
+      res.send(HTTP_STATUS.BAD_REQUEST_400);
+      return;
     }
-  }
+    const blogIsDeleted = await blogService.deleteBlog(id);
+    if(!blogIsDeleted) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404)
+    }
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+    }
 );

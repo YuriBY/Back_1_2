@@ -3,7 +3,7 @@ import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
 import { PostCreateType, PostDBType } from "../models/postType";
 import { postValidation } from "../validators/post-validator";
 import { HTTP_STATUS } from "../status/status1";
-import { postService } from "../domain/post-service";
+import { postService } from "../services/post-service";
 
 export const postRoute = Router({});
 
