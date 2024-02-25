@@ -1,6 +1,10 @@
 import { blogRepository } from "../repositories/blog-repository";
-import { BlogCreateType, BlogDBType, BlogOutputType, CreatePostInBlogInputType} from "../models/blogs";
-
+import {
+  BlogCreateType,
+  BlogDBType,
+  BlogOutputType,
+  CreatePostInBlogInputType,
+} from "../models/blogs";
 import crypto from "crypto";
 import { PostDBType, PostOutType } from "../models/postType";
 import { postRepository } from "../repositories/post-repository";
@@ -8,14 +12,6 @@ import { postQueryRepository } from "../repositories/postQueryrepository";
 import { blogQueryRepository } from "../repositories/blogQueryRepository";
 
 export const blogService = {
-  // async getAll(): Promise<BlogOutputType[] | []> {
-  //   return await blogRepository.getAll();
-  // },
-
-  // async getById(id: string): Promise<BlogOutputType | null> {
-  //   return await blogRepository.getById(id);
-  // },
-
   async createBlog(createData: BlogCreateType): Promise<BlogOutputType | null> {
     const { name, description, websiteUrl } = createData;
     const newBlog: BlogDBType = {
@@ -28,17 +24,19 @@ export const blogService = {
     };
     const createdBlog = await blogRepository.createBlog(newBlog);
     if (!createdBlog) {
-      return null
+      return null;
     }
     return createdBlog;
   },
 
-  async createPostToBlog(blogId: string, createPostModel: CreatePostInBlogInputType): Promise<PostOutType | null> {
-    
-    const {title, shortDescription, content} = createPostModel;
-    const blog = await blogRepository.getById(blogId);
+  async createPostToBlog(
+    blogId: string,
+    createPostModel: CreatePostInBlogInputType
+  ): Promise<PostOutType | null> {
+    const { title, shortDescription, content } = createPostModel;
+    const blog = await blogQueryRepository.getById(blogId);
     if (!blog) {
-      return null
+      return null;
     }
 
     const newPost: PostDBType = {
@@ -54,9 +52,12 @@ export const blogService = {
     const createdPost: PostOutType = await postRepository.createPost(newPost);
 
     if (!createdPost) {
-      return null}
+      return null;
+    }
 
-    const post: PostOutType | null = await postQueryRepository.getById(createdPost.id);
+    const post: PostOutType | null = await postQueryRepository.getById(
+      createdPost.id
+    );
 
     if (!post) {
       return null;
@@ -74,7 +75,7 @@ export const blogService = {
     if (!blog) {
       return null;
     }
-    return blogRepository.updateBlog(id, name, description, websiteUrl);
+    return await blogRepository.updateBlog(id, name, description, websiteUrl);
   },
 
   async deleteBlog(id: string) {

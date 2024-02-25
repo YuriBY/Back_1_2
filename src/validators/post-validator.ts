@@ -1,6 +1,7 @@
 import { body } from "express-validator";
 import { blogRepository } from "../repositories/blog-repository";
 import { inputValidationMiddleware } from "../middleweares/input-validation/input-validation-middleware";
+import { blogQueryRepository } from "../repositories/blogQueryRepository";
 
 const titleValidator = body("title")
   .trim()
@@ -19,7 +20,7 @@ const contentVAlidator = body("content")
 
 const blogIdVAlidator = body("blogId")
   .custom(async (value) => {
-    const blog = await blogRepository.getById(value);
+    const blog = await blogQueryRepository.getById(value);
 
     if (!blog) {
       throw Error;
@@ -33,5 +34,12 @@ export const postValidation = () => [
   shortDescriptionVAlidator,
   contentVAlidator,
   blogIdVAlidator,
+  inputValidationMiddleware,
+];
+
+export const postInBlogValidation = () => [
+  titleValidator,
+  shortDescriptionVAlidator,
+  contentVAlidator,
   inputValidationMiddleware,
 ];

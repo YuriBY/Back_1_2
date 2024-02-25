@@ -1,4 +1,4 @@
-import { ParamType } from "./../models/blogs";
+import { ParamType, RequestWithQueryAndParams } from "./../models/blogs";
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
 import { blogValidator } from "../validators/blog-validators";
@@ -20,6 +20,8 @@ import {
   SortData,
   blogQueryRepository,
 } from "../repositories/blogQueryRepository";
+import { postQueryRepository } from "../repositories/postQueryrepository";
+import { postInBlogValidation } from "../validators/post-validator";
 
 export const blogRoute = Router({});
 
@@ -42,13 +44,42 @@ blogRoute.get(
 );
 
 blogRoute.get("/:id", async (req: Request, res: Response) => {
-  const blog = await blogRepository.getById(req.params.id);
+  const blog = await blogQueryRepository.getById(req.params.id);
   if (blog) {
     res.send(blog);
   } else {
     res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
   }
 });
+
+blogRoute.get(
+  "/:id/posts",
+  async (
+    req: RequestWithQueryAndParams<ParamType, BlogQueryInputType>,
+    res: ResponseType<Pagination<PostOutType> | {}>
+  ) => {
+    const id = req.params.id;
+
+    const isValidUUID = require("uuid-validate");
+    if (!isValidUUID(id)) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
+    }
+    const sortData: SortData = {
+      searchNameTerm: id,
+      sortBy: req.query.sortBy ?? "createdAt",
+      sortDirection: req.query.sortDirection === "asc" ? "asc" : "desc",
+      pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
+      pageSize: req.query.pageSize ? +req.query.pageSize : 10,
+    };
+    const posts = await postQueryRepository.getAllPostsOfBlog(sortData);
+    if (Object.keys(posts).length == 0) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
+    }
+    res.send(posts);
+  }
+);
 
 blogRoute.post(
   "/",
@@ -63,6 +94,7 @@ blogRoute.post(
     });
     if (!createdBlog) {
       res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
+      return;
     }
     res.status(HTTP_STATUS.CREATED_201).send(createdBlog);
   }
@@ -71,7 +103,7 @@ blogRoute.post(
 blogRoute.post(
   "/:id/posts",
   authMiddlewear,
-  blogValidator(),
+  postInBlogValidation(),
   async (
     req: RequestWithBodyAndParams<ParamType, CreatePostInBlogInputType>,
     res: Response
@@ -80,7 +112,7 @@ blogRoute.post(
 
     const isValidUUID = require("uuid-validate");
     if (!isValidUUID(id)) {
-      res.send(HTTP_STATUS.BAD_REQUEST_400);
+      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
 
@@ -96,7 +128,7 @@ blogRoute.post(
     );
 
     if (!post) {
-      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
       return;
     }
     res.status(HTTP_STATUS.CREATED_201).send(post);
@@ -114,7 +146,7 @@ blogRoute.put(
     const id = req.params.id;
     const isValidUUID = require("uuid-validate");
     if (!isValidUUID(id)) {
-      res.send(HTTP_STATUS.BAD_REQUEST_400);
+      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
     const { name, description, websiteUrl } = req.body;
@@ -139,12 +171,13 @@ blogRoute.delete(
     const id = req.params.id;
     const isValidUUID = require("uuid-validate");
     if (!isValidUUID(id)) {
-      res.send(HTTP_STATUS.BAD_REQUEST_400);
+      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
       return;
     }
     const blogIsDeleted = await blogService.deleteBlog(id);
     if (!blogIsDeleted) {
       res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
     }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }

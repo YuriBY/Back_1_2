@@ -72,4 +72,28 @@ describe("/blogs", () => {
       .set("Authorization", `Basic ${encodedAuthString}`)
       .expect(HTTP_STATUS.BAD_REQUEST_400);
   });
+
+  it("shouldn't create post to blog with incorrect blogId", async () => {
+    const login = "admin";
+    const password = "qwerty";
+    const blogId = "12233245";
+
+    // Формируем строку аутентификации в формате "логин:пароль"
+    const authString = `${login}:${password}`;
+
+    // Кодируем строку аутентификации в формате Base64
+    const encodedAuthString = Buffer.from(authString).toString("base64");
+    const res = await request(app)
+      .post(
+        `/blogs/${blogId}/posts?pageNumber=1&pageSize=10&sortBy=createdAt&sortDirection=desc`
+      )
+      .send({
+        title: 23,
+        shortDescription: "aaa",
+        content: "a",
+        blogId: "XXX",
+      })
+      .set("Authorization", `Basic ${encodedAuthString}`)
+      .expect(HTTP_STATUS.NOT_FOUND_404);
+  });
 });

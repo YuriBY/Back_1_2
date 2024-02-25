@@ -3,17 +3,17 @@ import { postCollection } from "./db";
 import crypto from "crypto";
 
 export const postRepository = {
-  async getAll() {
-    const result: PostDBType[] = await postCollection.find({}).toArray();
-    if (!result) return [];
-    return result.map(({ _id, ...rest }) => ({ id: _id, ...rest }));
-  },
+  // async getAll() {
+  //   const result: PostDBType[] = await postCollection.find({}).toArray();
+  //   if (!result) return [];
+  //   return result.map(({ _id, ...rest }) => ({ id: _id, ...rest }));
+  // },
 
-  async getById(id: string): Promise<PostOutType | null> {
-    const result: PostDBType | null = await postCollection.findOne({ _id: id });
-    if (!result) return null;
-    return this.postMapper(result);
-  },
+  // async getById(id: string): Promise<PostOutType | null> {
+  //   const result: PostDBType | null = await postCollection.findOne({ _id: id });
+  //   if (!result) return null;
+  //   return this.postMapper(result);
+  // },
 
   postMapper(post: PostDBType): PostOutType {
     return {

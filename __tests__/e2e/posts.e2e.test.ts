@@ -70,4 +70,20 @@ describe("/posts", () => {
       .set("Authorization", `Basic ${encodedAuthString}`)
       .expect(HTTP_STATUS.BAD_REQUEST_400);
   });
+
+  // it("should find posts of blog", async () => {
+  //   const blogId = ;
+  //   const res = await request(app)
+  //     .get(`/blogs/${blogId}/posts?pageNumber=1&pageSize=10&sortBy=createdAt&sortDirection=desc`)
+  //     .expect(HTTP_STATUS.OK_200);
+  // });
+
+  it("shouldn't find posts of blog because wrong blogId", async () => {
+    const blogId = "12345556";
+    const res = await request(app)
+      .get(
+        `/blogs/${blogId}/posts?pageNumber=1&pageSize=10&sortBy=createdAt&sortDirection=desc`
+      )
+      .expect(HTTP_STATUS.NOT_FOUND_404);
+  });
 });

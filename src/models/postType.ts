@@ -27,3 +27,11 @@ export type PostOutType = {
   blogName: string;
   createdAt: string;
 };
+
+export type PostQueryInputType = {
+  searchNameTerm?: string | null;
+  sortBy?: string;
+  sortDirection?: string;
+  pageNumber?: number;
+  pageSize?: number;
+};

@@ -2,13 +2,13 @@ import { BlogCreateType, BlogDBType, BlogOutputType } from "../models/blogs";
 import { blogsCollection } from "./db";
 
 export const blogRepository = {
-  async getById(id: string): Promise<BlogDBType | null> {
-    const result: BlogDBType | null = await blogsCollection.findOne({
-      _id: id,
-    });
-    if (!result) return null;
-    return result;
-  },
+  // async getById(id: string): Promise<BlogDBType | null> {
+  //   const result: BlogDBType | null = await blogsCollection.findOne({
+  //     _id: id,
+  //   });
+  //   if (!result) return null;
+  //   return result;
+  // },
 
   blogMapper(blog: BlogDBType): BlogOutputType {
     return {
