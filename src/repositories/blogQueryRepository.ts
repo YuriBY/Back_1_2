@@ -1,12 +1,12 @@
-import { Pagination } from "./../models/blogs";
+import { BlogQueryInputType, Pagination } from "./../models/blogs";
 import { SortDirection } from "mongodb";
 import { BlogDBType, BlogOutputType } from "../models/blogs";
 import { blogsCollection } from "./db";
 
-type SortData = {
+export type SortData = {
   searchNameTerm: string | null;
   sortBy: string;
-  sortDirection: SortDirection;
+  sortDirection: "asc" | "desc";
   pageNumber: number;
   pageSize: number;
 };

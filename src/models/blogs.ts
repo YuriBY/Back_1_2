@@ -34,7 +34,7 @@ export type BlogOutputType = {
 };
 
 export type BlogQueryInputType = {
-  searchNameTerm?: string;
+  searchNameTerm?: string | null;
   sortBy?: string;
   sortDirection?: string;
   pageNumber?: number;
