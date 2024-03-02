@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon --inspect ./dist/index.js",
-    "jest": "jest -i"
+    "jest": "jest -i --detectOpenHandles"
   },
   "dependencies": {
     "@types/dotenv": "^8.2.0",

@@ -1,25 +1,5 @@
-import express, { Request, Response } from "express";
-import { blogRoute } from "./routes/blog-routes";
-import { postRoute } from "./routes/post-routes";
-import { blogsCollection, postCollection, runDB } from "./repositories/db";
-import { HTTP_STATUS } from "./status/status1";
-import "dotenv/config";
-
-export const app = express();
-
-const jsonBodyMiddlewear = express.json();
-app.use(jsonBodyMiddlewear);
-
-const port = process.env.PORT || 5000;
-
-app.use("/blogs", blogRoute);
-app.use("/posts", postRoute);
-
-app.delete("/testing/all-data", (req: Request, res: Response) => {
-  blogsCollection.deleteMany({});
-  postCollection.deleteMany({});
-  res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-});
+import { runDB } from "./repositories/db";
+import { app, port } from "./app";
 
 const startApp = async () => {
   await runDB();
@@ -29,5 +9,3 @@ const startApp = async () => {
 };
 
 startApp();
-
-//
