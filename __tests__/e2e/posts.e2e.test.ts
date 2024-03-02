@@ -7,8 +7,14 @@ describe("/posts", () => {
     await request(app).delete("/testing/all-data");
   });
 
-  it("should return 200 and empty array", async () => {
-    await request(app).get("/posts").expect(HTTP_STATUS.OK_200, []);
+  it("should return 200 and empty postsArray as items", async () => {
+    await request(app).get("/posts").expect(HTTP_STATUS.OK_200).expect({
+      pagesCount: 0,
+      pageSize: 10,
+      page: 1,
+      totalCount: 0,
+      items: [],
+    });
   });
 
   it("should return 404 for not existing videos", async () => {
