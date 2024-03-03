@@ -1,16 +1,11 @@
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
-import {
-  PostCreateType,
-  PostDBType,
-  PostQueryInputType,
-} from "../models/postType";
+import { PostCreateType, PostQueryInputType } from "../models/postType";
 import { postValidation } from "../validators/post-validator";
 import { HTTP_STATUS } from "../status/status1";
 import { postService } from "../services/post-service";
-import { RequestWithQuery } from "../models/blogs";
-import { SortData } from "../repositories/blogQueryRepository";
 import { postQueryRepository } from "../repositories/postQueryrepository";
+import { RequestWithQuery, SortData } from "../models/commonTypes";
 
 export const postRoute = Router({});
 

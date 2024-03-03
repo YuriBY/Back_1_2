@@ -1,15 +1,6 @@
-import { BlogQueryInputType, Pagination } from "./../models/blogs";
-import { SortDirection } from "mongodb";
-import { BlogDBType, BlogOutputType } from "../models/blogs";
+import { BlogDBType, BlogOutputType } from "../models/blogsType";
 import { blogsCollection } from "./db";
-
-export type SortData = {
-  searchNameTerm: string | null;
-  sortBy: string;
-  sortDirection: "asc" | "desc";
-  pageNumber: number;
-  pageSize: number;
-};
+import { Pagination, SortData } from "../models/commonTypes";
 
 export const blogQueryRepository = {
   async getAll(sortData: SortData): Promise<Pagination<BlogOutputType> | {}> {

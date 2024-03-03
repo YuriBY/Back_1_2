@@ -35,3 +35,9 @@ export type PostQueryInputType = {
   pageNumber?: number;
   pageSize?: number;
 };
+
+export type CreatePostInBlogInputType = {
+  title: string;
+  shortDescription: string;
+  content: string;
+};

@@ -1,9 +1,6 @@
-import { log } from "console";
-import { Pagination } from "../models/blogs";
-import { PostCreateType, PostDBType, PostOutType } from "../models/postType";
-import { SortData } from "./blogQueryRepository";
+import { Pagination, SortData } from "../models/commonTypes";
+import { PostDBType, PostOutType } from "../models/postType";
 import { postCollection } from "./db";
-import crypto from "crypto";
 
 export const postQueryRepository = {
   async getAll(sortdata: SortData) {

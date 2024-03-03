@@ -1,4 +1,3 @@
-import { ParamType, RequestWithQueryAndParams } from "./../models/blogs";
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
 import { blogValidator } from "../validators/blog-validators";
@@ -6,22 +5,22 @@ import {
   BlogCreateType,
   BlogOutputType,
   BlogQueryInputType,
-  CreatePostInBlogInputType,
-  Pagination,
-  RequestWithBodyAndParams,
-  RequestWithQuery,
-  ResponseType,
-} from "../models/blogs";
+} from "../models/blogsType";
 import { HTTP_STATUS } from "../status/status1";
 import { blogService } from "../services/blog-service";
-import { blogRepository } from "../repositories/blog-repository";
-import { PostOutType } from "../models/postType";
-import {
-  SortData,
-  blogQueryRepository,
-} from "../repositories/blogQueryRepository";
+import { CreatePostInBlogInputType, PostOutType } from "../models/postType";
+import { blogQueryRepository } from "../repositories/blogQueryRepository";
 import { postQueryRepository } from "../repositories/postQueryrepository";
 import { postInBlogValidation } from "../validators/post-validator";
+import {
+  Pagination,
+  ParamType,
+  RequestWithBodyAndParams,
+  RequestWithQuery,
+  RequestWithQueryAndParams,
+  ResponseType,
+  SortData,
+} from "../models/commonTypes";
 
 export const blogRoute = Router({});
 

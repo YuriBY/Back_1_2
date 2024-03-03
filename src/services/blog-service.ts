@@ -3,10 +3,13 @@ import {
   BlogCreateType,
   BlogDBType,
   BlogOutputType,
-  CreatePostInBlogInputType,
-} from "../models/blogs";
+} from "../models/blogsType";
 import crypto from "crypto";
-import { PostDBType, PostOutType } from "../models/postType";
+import {
+  CreatePostInBlogInputType,
+  PostDBType,
+  PostOutType,
+} from "../models/postType";
 import { postRepository } from "../repositories/post-repository";
 import { postQueryRepository } from "../repositories/postQueryrepository";
 import { blogQueryRepository } from "../repositories/blogQueryRepository";
