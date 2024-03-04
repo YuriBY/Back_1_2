@@ -18,8 +18,7 @@ export const usersCollection = client.db().collection<UserDBType>("users");
 
 export async function runDB() {
   try {
-    console.log(mongoURI);
-    
+       
     // connect client to server
     await client.connect();
     // establich and verify connection

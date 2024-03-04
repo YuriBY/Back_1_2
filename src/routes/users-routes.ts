@@ -29,7 +29,7 @@ userRoute.get(
   ) => {
     const sortData: UserSortData = {
       searchLoginTerm: req.query.searchLoginTerm ?? null,
-      searchEmailTerm: req.query.searchLoginTerm ?? null,
+      searchEmailTerm: req.query.searchEmailTerm ?? null,
       sortBy: req.query.sortBy ?? "createdAt",
       sortDirection: req.query.sortDirection === "asc" ? "asc" : "desc",
       pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,

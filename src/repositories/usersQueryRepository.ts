@@ -13,23 +13,13 @@ export const usersQueryRepository = {
       pageSize,
     } = sortData;
 
-    let filter = {};
-    if (searchLoginTerm) {
-      filter = {
-        login: {
-          $regex: sortData.searchLoginTerm,
-          $options: "i",
-        },
-      };
-    } else if (searchEmailTerm) {
-      filter = {
-        email: {
-          $regex: sortData.searchEmailTerm,
-          $options: "i",
-        },
-      };
+    const filter = {
+      $or : [
+        { login: { $regex: searchLoginTerm ?? '', $options: 'i'} },
+        { email: { $regex: searchEmailTerm ?? '', $options: 'i'} },
+      ]
     }
-
+   
     const result: UserDBType[] = await usersCollection
       .find(filter)
       .sort(sortBy, sortDirection)
@@ -53,17 +43,6 @@ export const usersQueryRepository = {
         createdAt,
       })),
     };
-  },
-
-  async doUserExistInDb(
-    login?: string | undefined,
-    email?: string | undefined
-  ): Promise<UserDBType[]> {
-    const filter = {
-      $or: [{ login: login ?? "" }, { email: email ?? "" }],
-    };
-    const result: UserDBType[] = await usersCollection.find(filter).toArray();
-    return result;
   },
 
   async getByLoginOrEmail (loginOrEmail: string) : Promise<UserDBType | null> {
