@@ -65,4 +65,10 @@ export const usersQueryRepository = {
     const result: UserDBType[] = await usersCollection.find(filter).toArray();
     return result;
   },
+
+  async getByLoginOrEmail (loginOrEmail: string) : Promise<UserDBType | null> {
+    const user : UserDBType | null = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+    return user
+
+  }
 };
