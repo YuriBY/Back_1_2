@@ -4,7 +4,6 @@ import { postRoute } from "./routes/post-routes";
 import {
   blogsCollection,
   postCollection,
-  runDB,
   usersCollection,
 } from "./repositories/db";
 import { HTTP_STATUS } from "./status/status1";

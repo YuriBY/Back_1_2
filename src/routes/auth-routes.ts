@@ -4,6 +4,9 @@ import { authValidator } from "../validators/auth-validator";
 import { authService } from "../services/auth-service";
 import { RequestWithBody } from "../models/commonTypes";
 import { AuthBodyType } from "../models/authType";
+import { jwtService } from "../application/jwt-service";
+import { UserDBType } from "../models/usersType";
+import { log } from "console";
 
 export const authRoute = Router({});
 
@@ -15,13 +18,14 @@ authRoute.post(
       loginOrEmail: req.body.loginOrEmail,
       password: req.body.password,
     };
-    const credentialIsValued = await authService.checkCredential(
+    const user: UserDBType | null = await authService.checkCredential(
       receivedCredential
     );
-    if (!credentialIsValued) {
+    if (!user) {
       res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
       return;
     }
-    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+    const token = await jwtService.createJWT(user);
+    res.status(HTTP_STATUS.OK_200).send(token.data);
   }
 );
