@@ -11,6 +11,7 @@ export type CommentDBType = {
   commentatorInfo: {
     userId: string;
     userLogin: string;
+    postId: string;
   };
   createdAt: string;
 };
@@ -23,4 +24,11 @@ export type CommentOutType = {
     userLogin: string;
   };
   createdAt: string;
+};
+
+export type CommentsQueryInputType = {
+  sortBy?: string;
+  sortDirection?: string;
+  pageNumber?: number;
+  pageSize?: number;
 };

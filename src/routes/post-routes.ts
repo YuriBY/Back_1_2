@@ -16,11 +16,12 @@ import {
   ParamType,
   RequestWithBodyAndParams,
   RequestWithQuery,
+  RequestWithQueryAndParams,
   SortData,
 } from "../models/commonTypes";
 import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { commentService } from "../services/comment-service";
-import { InputObjForComment } from "../models/comments";
+import { CommentsQueryInputType, InputObjForComment } from "../models/comments";
 
 export const postRoute = Router({});
 
@@ -118,8 +119,19 @@ postRoute.post(
       userLogin: req.user!.login,
     };
     const newComment = await commentService.sendComment(newObjForComment);
-    console.log(newComment);
-
     res.status(HTTP_STATUS.CREATED_201).send(newComment);
   }
 );
+
+// postRoute.get(
+//   "/:id/comments",
+//   async (req: RequestWithQueryAndParams<ParamType, CommentsQueryInputType>, res: Response) => {
+//     const sortData: CommentsQueryInputType = {
+
+//       userId: req.user!._id,
+//       userLogin: req.user!.login,
+//     };
+//     const newComment = await commentService.sendComment(newObjForComment);
+//     res.status(HTTP_STATUS.CREATED_201).send(newComment);
+//   }
+// );

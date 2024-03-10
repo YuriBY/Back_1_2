@@ -27,6 +27,7 @@ export const commentService = {
       commentatorInfo: {
         userId,
         userLogin,
+        postId,
       },
       createdAt: new Date().toISOString(),
     };

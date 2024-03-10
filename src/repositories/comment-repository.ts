@@ -19,7 +19,10 @@ export const commentRepository = {
     return {
       id: comment._id,
       content: comment.content,
-      commentatorInfo: comment.commentatorInfo,
+      commentatorInfo: {
+        userId: comment.commentatorInfo.userId,
+        userLogin: comment.commentatorInfo.userLogin,
+      },
       createdAt: comment.createdAt,
     };
   },
