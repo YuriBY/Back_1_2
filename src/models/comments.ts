@@ -27,8 +27,8 @@ export type CommentOutType = {
 };
 
 export type CommentsQueryInputType = {
-  sortBy?: string;
-  sortDirection?: string;
-  pageNumber?: number;
-  pageSize?: number;
+  sortBy: string;
+  sortDirection: "asc" | "desc";
+  pageNumber: number;
+  pageSize: number;
 };

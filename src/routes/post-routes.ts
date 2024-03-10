@@ -22,6 +22,7 @@ import {
 import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { commentService } from "../services/comment-service";
 import { CommentsQueryInputType, InputObjForComment } from "../models/comments";
+import { commentsQueryRepository } from "../repositories/commetsQueryRepository";
 
 export const postRoute = Router({});
 
@@ -123,15 +124,22 @@ postRoute.post(
   }
 );
 
-// postRoute.get(
-//   "/:id/comments",
-//   async (req: RequestWithQueryAndParams<ParamType, CommentsQueryInputType>, res: Response) => {
-//     const sortData: CommentsQueryInputType = {
-
-//       userId: req.user!._id,
-//       userLogin: req.user!.login,
-//     };
-//     const newComment = await commentService.sendComment(newObjForComment);
-//     res.status(HTTP_STATUS.CREATED_201).send(newComment);
-//   }
-// );
+postRoute.get(
+  "/:id/comments",
+  async (
+    req: RequestWithQueryAndParams<ParamType, CommentsQueryInputType>,
+    res: Response
+  ) => {
+    const sortData: CommentsQueryInputType = {
+      sortBy: req.query.sortBy ?? "createdAt",
+      sortDirection: req.query.sortDirection === "asc" ? "asc" : "desc",
+      pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
+      pageSize: req.query.pageSize ? +req.query.pageSize : 10,
+    };
+    const commentsToPost = await commentsQueryRepository.getAllComments(
+      req.params.id,
+      sortData
+    );
+    res.send(commentsToPost);
+  }
+);

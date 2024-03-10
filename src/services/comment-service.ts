@@ -1,12 +1,15 @@
+import { SortData } from "./../models/commonTypes";
 import { PostOutType } from "../models/postType";
 import crypto from "crypto";
 import {
   CommentDBType,
   CommentOutType,
+  CommentsQueryInputType,
   InputObjForComment,
 } from "../models/comments";
 import { postQueryRepository } from "../repositories/postQueryrepository";
 import { commentRepository } from "../repositories/comment-repository";
+import { ParamType } from "../models/commonTypes";
 
 export const commentService = {
   async sendComment(
