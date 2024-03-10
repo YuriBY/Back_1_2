@@ -1,18 +1,16 @@
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
+import { PostCreateType, PostQueryInputType } from "../models/postType";
 import {
-  Content,
-  PostCreateType,
-  PostQueryInputType,
-} from "../models/postType";
-import {
-  commentInPostValidation,
+  contentValidation,
   postValidation,
 } from "../validators/post-validator";
 import { HTTP_STATUS } from "../status/status1";
 import { postService } from "../services/post-service";
 import { postQueryRepository } from "../repositories/postQueryrepository";
 import {
+  Content,
+  Pagination,
   ParamType,
   RequestWithBodyAndParams,
   RequestWithQuery,
@@ -21,7 +19,11 @@ import {
 } from "../models/commonTypes";
 import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { commentService } from "../services/comment-service";
-import { CommentsQueryInputType, InputObjForComment } from "../models/comments";
+import {
+  CommentOutType,
+  CommentsQueryInputType,
+  InputObjForComment,
+} from "../models/comments";
 import { commentsQueryRepository } from "../repositories/commetsQueryRepository";
 
 export const postRoute = Router({});
@@ -111,7 +113,7 @@ postRoute.delete(
 postRoute.post(
   "/:id/comments",
   authJWTMiddlewear,
-  commentInPostValidation(),
+  contentValidation(),
   async (req: RequestWithBodyAndParams<ParamType, Content>, res: Response) => {
     const newObjForComment: InputObjForComment = {
       postId: req.params.id,
@@ -119,7 +121,13 @@ postRoute.post(
       userId: req.user!._id,
       userLogin: req.user!.login,
     };
-    const newComment = await commentService.sendComment(newObjForComment);
+    const newComment: CommentOutType | null = await commentService.sendComment(
+      newObjForComment
+    );
+    if (!newComment) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
+    }
     res.status(HTTP_STATUS.CREATED_201).send(newComment);
   }
 );
@@ -136,10 +144,12 @@ postRoute.get(
       pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
       pageSize: req.query.pageSize ? +req.query.pageSize : 10,
     };
-    const commentsToPost = await commentsQueryRepository.getAllComments(
-      req.params.id,
-      sortData
-    );
+    const commentsToPost: Pagination<CommentOutType> =
+      await commentsQueryRepository.getAllComments(req.params.id, sortData);
+    if (commentsToPost.items.length == 0) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
+    }
     res.send(commentsToPost);
   }
 );

@@ -32,22 +32,16 @@ export const commentRepository = {
     return this.commentMapper(newComment);
   },
 
-  // async updatePost(
-  //   id: string,
-  //   title: string,
-  //   shortDescription: string,
-  //   content: string,
-  //   blogId: string
-  // ) {
-  //   const result = await postCollection.updateOne(
-  //     { _id: id },
-  //     { $set: { title, shortDescription, content, blogId } }
-  //   );
-  //   return result.matchedCount === 1;
-  // },
+  async updateComment(commentId: string, content: string) {
+    const result = await commentsCollection.updateOne(
+      { _id: commentId },
+      { $set: { content } }
+    );
+    return result.matchedCount === 1;
+  },
 
-  // async deletePost(id: string) {
-  //   const result = await postCollection.deleteOne({ _id: id });
-  //   return result.deletedCount === 1;
-  // },
+  async deleteComment(id: string) {
+    const result = await commentsCollection.deleteOne({ _id: id });
+    return result.deletedCount === 1;
+  },
 };

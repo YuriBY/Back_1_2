@@ -48,7 +48,7 @@ export const postInBlogValidation = () => [
   inputValidationMiddleware,
 ];
 
-export const commentInPostValidation = () => [
+export const contentValidation = () => [
   contenetJWTValidator,
   inputValidationMiddleware,
 ];

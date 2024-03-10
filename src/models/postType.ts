@@ -39,7 +39,3 @@ export type CreatePostInBlogInputType = {
   shortDescription: string;
   content: string;
 };
-
-export type Content = {
-  content: string;
-};

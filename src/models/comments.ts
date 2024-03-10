@@ -32,3 +32,15 @@ export type CommentsQueryInputType = {
   pageNumber: number;
   pageSize: number;
 };
+
+export type objForCommentUpdate = {
+  commentId: string;
+  content: string;
+  userId: string;
+  userLogin: string;
+};
+
+export type objForCommentDelete = {
+  commentId: string;
+  userId: string;
+};

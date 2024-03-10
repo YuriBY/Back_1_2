@@ -1,20 +1,19 @@
-import { BlogDBType, BlogOutputType } from "../models/blogsType";
-import { blogsCollection, commentsCollection } from "./db";
-import { Pagination, SortData } from "../models/commonTypes";
+import { commentsCollection } from "./db";
+import { Pagination } from "../models/commonTypes";
 import {
   CommentDBType,
   CommentOutType,
   CommentsQueryInputType,
 } from "../models/comments";
+import { Result } from "../models/resultTypes";
+import { HTTP_STATUS } from "../status/status1";
 
 export const commentsQueryRepository = {
   async getAllComments(
     postId: string,
     sortData: CommentsQueryInputType
-  ): Promise<Pagination<CommentOutType> | {}> {
+  ): Promise<Pagination<CommentOutType>> {
     const { sortBy, sortDirection, pageNumber, pageSize } = sortData;
-    console.log(postId);
-
     let filter = {
       "commentatorInfo.postId": postId,
     };
@@ -29,7 +28,15 @@ export const commentsQueryRepository = {
     const totalCount = await commentsCollection.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
-    if (!result) return [];
+    if (!result)
+      return {
+        pagesCount,
+        pageSize,
+        page: pageNumber,
+        totalCount,
+        items: [],
+      };
+
     return {
       pagesCount,
       pageSize,
@@ -46,22 +53,34 @@ export const commentsQueryRepository = {
     };
   },
 
-  // blogMapper(blog: BlogDBType): BlogOutputType {
-  //   return {
-  //     id: blog._id,
-  //     name: blog.name,
-  //     description: blog.description,
-  //     websiteUrl: blog.websiteUrl,
-  //     createdAt: blog.createdAt,
-  //     isMembership: blog.isMembership,
-  //   };
-  // },
+  commentMapper(comment: CommentDBType): CommentOutType {
+    return {
+      id: comment._id,
+      content: comment.content,
+      commentatorInfo: {
+        userId: comment.commentatorInfo.userId,
+        userLogin: comment.commentatorInfo.userLogin,
+      },
+      createdAt: comment.createdAt,
+    };
+  },
 
-  // async getById(id: string): Promise<BlogOutputType | null> {
-  //   const result: BlogDBType | null = await blogsCollection.findOne({
-  //     _id: id,
-  //   });
-  //   if (!result) return null;
-  //   return this.blogMapper(result);
-  // },
+  async getById(id: string): Promise<CommentOutType | null> {
+    const result: CommentDBType | null = await commentsCollection.findOne({
+      _id: id,
+    });
+    if (!result) return null;
+    return this.commentMapper(result);
+  },
+
+  async findDbTypeById(id: string): Promise<CommentDBType | Result> {
+    const result: CommentDBType | null = await commentsCollection.findOne({
+      _id: id,
+    });
+    if (!result)
+      return {
+        code: HTTP_STATUS.NOT_FOUND_404,
+      };
+    return result;
+  },
 };

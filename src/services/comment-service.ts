@@ -1,15 +1,17 @@
-import { SortData } from "./../models/commonTypes";
+import { HTTP_STATUS } from "./../status/status1";
 import { PostOutType } from "../models/postType";
 import crypto from "crypto";
 import {
   CommentDBType,
   CommentOutType,
-  CommentsQueryInputType,
   InputObjForComment,
+  objForCommentDelete,
+  objForCommentUpdate,
 } from "../models/comments";
 import { postQueryRepository } from "../repositories/postQueryrepository";
 import { commentRepository } from "../repositories/comment-repository";
-import { ParamType } from "../models/commonTypes";
+import { commentsQueryRepository } from "../repositories/commetsQueryRepository";
+import { Result } from "../models/resultTypes";
 
 export const commentService = {
   async sendComment(
@@ -38,23 +40,43 @@ export const commentService = {
     return createdComment;
   },
 
-  //   async updatePost(
-  //     id: string,
-  //     title: string,
-  //     shortDescription: string,
-  //     content: string,
-  //     blogId: string
-  //   ) {
-  //     return await postRepository.updatePost(
-  //       id,
-  //       title,
-  //       shortDescription,
-  //       content,
-  //       blogId
-  //     );
-  //   },
+  async updateCommentContent(newObjForCommentUpdate: objForCommentUpdate) {
+    const { commentId, content, userId, userLogin } = newObjForCommentUpdate;
+    const foundedComment: CommentDBType | Result =
+      await commentsQueryRepository.findDbTypeById(commentId);
+    if ("code" in foundedComment) {
+      return {
+        code: HTTP_STATUS.NOT_FOUND_404,
+      };
+    }
+    if (foundedComment.commentatorInfo.userId !== userId) {
+      return {
+        code: HTTP_STATUS.FORBIDDEN_403,
+      };
+    }
+    commentRepository.updateComment(foundedComment._id, content);
+    return {
+      code: HTTP_STATUS.NO_CONTENT_204,
+    };
+  },
 
-  //   async deletePost(id: string) {
-  //     return await postRepository.deletePost(id);
-  //   },
+  async deleteById(newObjToDelete: objForCommentDelete) {
+    const { commentId, userId } = newObjToDelete;
+    const foundedComment: CommentDBType | Result =
+      await commentsQueryRepository.findDbTypeById(commentId);
+    if ("code" in foundedComment) {
+      return {
+        code: HTTP_STATUS.NOT_FOUND_404,
+      };
+    }
+    if (foundedComment.commentatorInfo.userId !== userId) {
+      return {
+        code: HTTP_STATUS.FORBIDDEN_403,
+      };
+    }
+    commentRepository.deleteComment(foundedComment._id);
+    return {
+      code: HTTP_STATUS.NO_CONTENT_204,
+    };
+  },
 };

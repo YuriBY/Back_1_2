@@ -25,3 +25,7 @@ export type SortData = {
   pageNumber: number;
   pageSize: number;
 };
+
+export type Content = {
+  content: string;
+};
