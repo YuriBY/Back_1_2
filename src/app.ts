@@ -7,7 +7,6 @@ import {
   usersCollection,
 } from "./repositories/db";
 import { HTTP_STATUS } from "./status/status1";
-import "dotenv/config";
 import { authRoute } from "./routes/auth-routes";
 import { userRoute } from "./routes/users-routes";
 
@@ -15,8 +14,6 @@ export const app = express();
 
 const jsonBodyMiddlewear = express.json();
 app.use(jsonBodyMiddlewear);
-
-export const port = process.env.PORT || 5000;
 
 app.use("/blogs", blogRoute);
 app.use("/posts", postRoute);

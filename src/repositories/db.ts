@@ -1,10 +1,11 @@
-import "dotenv/config";
 import { BlogDBType } from "../models/blogsType";
 import { PostDBType } from "./../models/postType";
 import { MongoClient } from "mongodb";
 import { UserDBType } from "../models/usersType";
+import { appConfig } from "../common/config/appConfi";
+import { CommentDBType } from "../models/comments";
 
-const mongoURI = process.env.MONGO_URL || "mongodb://localhost:27017";
+const mongoURI = appConfig.MONGO_URL;
 
 if (!mongoURI) {
   throw new Error("!URL does not found");
@@ -15,10 +16,14 @@ export const client = new MongoClient(mongoURI);
 export const blogsCollection = client.db().collection<BlogDBType>("blogs");
 export const postCollection = client.db().collection<PostDBType>("posts");
 export const usersCollection = client.db().collection<UserDBType>("users");
+export const commentsCollection = client
+  .db()
+  .collection<CommentDBType>("comments");
 
 export async function runDB() {
   try {
-       
+    console.log(appConfig.MONGO_URL);
+
     // connect client to server
     await client.connect();
     // establich and verify connection
@@ -31,4 +36,7 @@ export async function runDB() {
     await client.close();
   }
 }
-//
+
+export async function stopDB() {
+  await client.close();
+}

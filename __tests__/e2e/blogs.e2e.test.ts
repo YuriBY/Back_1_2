@@ -1,13 +1,21 @@
 import request from "supertest";
 import { HTTP_STATUS } from "../../src/status/status1";
 import { app } from "../../src/app";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import { appConfig } from "../../src/common/config/appConfi";
+import { runDB, stopDB } from "../../src/repositories/db";
 
 describe("/blogs", () => {
   beforeAll(async () => {
+    const mongoServer = await MongoMemoryServer.create();
+    appConfig.MONGO_URL = mongoServer.getUri();
+    await runDB();
     await request(app).delete("/testing/all-data");
   });
 
-  afterAll((done) => done());
+  afterAll(async () => {
+    await stopDB();
+  });
 
   it("should return 200 and empty blogsArray as items", async () => {
     await request(app).get("/blogs").expect(HTTP_STATUS.OK_200).expect({

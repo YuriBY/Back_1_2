@@ -1,11 +1,26 @@
 import { Router, Request, Response } from "express";
 import { authMiddlewear } from "../middleweares/auth/auth-middlewear";
-import { PostCreateType, PostQueryInputType } from "../models/postType";
-import { postValidation } from "../validators/post-validator";
+import {
+  Content,
+  PostCreateType,
+  PostQueryInputType,
+} from "../models/postType";
+import {
+  commentInPostValidation,
+  postValidation,
+} from "../validators/post-validator";
 import { HTTP_STATUS } from "../status/status1";
 import { postService } from "../services/post-service";
 import { postQueryRepository } from "../repositories/postQueryrepository";
-import { RequestWithQuery, SortData } from "../models/commonTypes";
+import {
+  ParamType,
+  RequestWithBodyAndParams,
+  RequestWithQuery,
+  SortData,
+} from "../models/commonTypes";
+import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
+import { commentService } from "../services/comment-service";
+import { InputObjForComment } from "../models/comments";
 
 export const postRoute = Router({});
 
@@ -88,5 +103,23 @@ postRoute.delete(
       postService.deletePost(req.params.id);
       res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
     }
+  }
+);
+
+postRoute.post(
+  "/:id/comments",
+  authJWTMiddlewear,
+  commentInPostValidation(),
+  async (req: RequestWithBodyAndParams<ParamType, Content>, res: Response) => {
+    const newObjForComment: InputObjForComment = {
+      postId: req.params.id,
+      content: req.body.content,
+      userId: req.user!._id,
+      userLogin: req.user!.login,
+    };
+    const newComment = await commentService.sendComment(newObjForComment);
+    console.log(newComment);
+
+    res.status(HTTP_STATUS.CREATED_201).send(newComment);
   }
 );

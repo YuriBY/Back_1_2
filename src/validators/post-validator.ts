@@ -28,6 +28,11 @@ const blogIdVAlidator = body("blogId")
   })
   .withMessage("Incorrect blogId");
 
+const contenetJWTValidator = body("content")
+  .trim()
+  .isLength({ min: 20, max: 200 })
+  .withMessage("incorrect content");
+
 export const postValidation = () => [
   titleValidator,
   shortDescriptionVAlidator,
@@ -40,5 +45,10 @@ export const postInBlogValidation = () => [
   titleValidator,
   shortDescriptionVAlidator,
   contentVAlidator,
+  inputValidationMiddleware,
+];
+
+export const commentInPostValidation = () => [
+  contenetJWTValidator,
   inputValidationMiddleware,
 ];

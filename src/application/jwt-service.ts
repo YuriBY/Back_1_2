@@ -1,9 +1,8 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { UserDBType } from "../models/usersType";
-import "dotenv/config";
-import { ObjectId } from "bson";
+import { appConfig } from "../common/config/appConfi";
 
-const JWT_SECRET = process.env.SECRET_KEY;
+const JWT_SECRET = appConfig.SECRET_KEY;
 if (!JWT_SECRET) {
   throw new Error("!JWT_SECRET does not found");
 }
@@ -23,6 +22,7 @@ export const jwtService = {
   async getUserIdByToken(token: string) {
     try {
       const result = jwt.verify(token, JWT_SECRET);
+
       if (typeof result === "string") {
         return null;
       } else {

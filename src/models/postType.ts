@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-
 export type PostDBType = {
   _id: string;
   title: string;
@@ -39,5 +37,9 @@ export type PostQueryInputType = {
 export type CreatePostInBlogInputType = {
   title: string;
   shortDescription: string;
+  content: string;
+};
+
+export type Content = {
   content: string;
 };

@@ -1,5 +1,8 @@
 import { runDB } from "./repositories/db";
-import { app, port } from "./app";
+import { app } from "./app";
+import { appConfig } from "./common/config/appConfi";
+
+const port = appConfig.PORT;
 
 const startApp = async () => {
   await runDB();

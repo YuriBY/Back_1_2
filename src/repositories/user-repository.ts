@@ -20,4 +20,10 @@ export const usersRepository = {
     const result = await usersCollection.deleteOne({ _id: id });
     return result.deletedCount === 1;
   },
+
+  async findUserById(userId: string): Promise<UserDBType | null> {
+    const result = await usersCollection.findOne({ _id: userId });
+    if (!result) return null;
+    return result;
+  },
 };
