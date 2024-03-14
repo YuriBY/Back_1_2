@@ -5,4 +5,5 @@ export const appConfig = {
   SECRET_KEY: process.env.SECRET_KEY,
   PORT: process.env.PORT || 5000,
   EMAIL_PASS: process.env.EMAIL_PASS,
+  EMAIL: process.env.EMAIL,
 };
