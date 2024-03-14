@@ -11,6 +11,7 @@ import { HTTP_STATUS } from "./status/status1";
 import { authRoute } from "./routes/auth-routes";
 import { userRoute } from "./routes/users-routes";
 import { commentsRoute } from "./routes/comments-routes";
+import { emailRouter } from "./routes/email-routes";
 
 export const app = express();
 
@@ -22,6 +23,7 @@ app.use("/posts", postRoute);
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/comments", commentsRoute);
+app.use("/email", emailRouter);
 
 app.delete("/testing/all-data", (req: Request, res: Response) => {
   blogsCollection.deleteMany({});
