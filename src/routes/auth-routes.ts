@@ -123,6 +123,7 @@ authRoute.post(
     await emailAdapter.sendMail(
       req.body.emai,
       "Resend email",
+      "toResend",
       user.emailConfirmation.confirmationCode
     );
 
