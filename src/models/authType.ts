@@ -8,3 +8,17 @@ export type AuthUserType = {
   email: string;
   userId: string;
 };
+
+export type AuthRegistrationbBodyType = {
+  login: string;
+  email: string;
+  password: string;
+};
+
+export type CodeConfirmationOfRegistration = {
+  code: string;
+};
+
+export type EmailConfirmationResendingType = {
+  emai: string;
+};

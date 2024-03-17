@@ -23,3 +23,8 @@ export const userValidator = () => [
   emailValidator,
   inputValidationMiddleware,
 ];
+
+export const emailValidation = () => [
+  emailValidator,
+  inputValidationMiddleware,
+];

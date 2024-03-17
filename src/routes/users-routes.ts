@@ -10,6 +10,7 @@ import {
   RequestWithQuery,
 } from "../models/commonTypes";
 import {
+  UserAccountOutType,
   UserOutType,
   UserQueryInputType,
   UserSortData,
@@ -46,11 +47,39 @@ userRoute.post(
   userValidator(),
   async (req: RequestWithBody<inputUserType>, res: Response) => {
     const { login, password, email } = req.body;
-    const createdUser: UserOutType | null = await userService.createUser({
-      login,
-      password,
-      email,
-    });
+
+    const isUserLoginExists = await usersQueryRepository.getByLoginOrEmail(
+      req.body.login
+    );
+    if (isUserLoginExists)
+      res.status(HTTP_STATUS.BAD_REQUEST_400).send({
+        errorsMessages: [
+          {
+            message: "Input Login Exists",
+            field: "Login",
+          },
+        ],
+      });
+    const isUserEmailExists = await usersQueryRepository.getByLoginOrEmail(
+      req.body.email
+    );
+    if (isUserEmailExists)
+      res.status(HTTP_STATUS.BAD_REQUEST_400).send({
+        errorsMessages: [
+          {
+            message: "Input Email Exists",
+            field: "Email",
+          },
+        ],
+      });
+
+    const createdUser: UserAccountOutType | null = await userService.createUser(
+      {
+        login,
+        password,
+        email,
+      }
+    );
     res.status(HTTP_STATUS.CREATED_201).send(createdUser);
   }
 );

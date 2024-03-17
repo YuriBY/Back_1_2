@@ -36,3 +36,32 @@ export type UserSortData = {
   pageNumber: number;
   pageSize: number;
 };
+
+export type UserAccountDBType = {
+  _id: string;
+  accountData: {
+    userName: string;
+    email: string;
+    passwordHash: string;
+    created: string;
+  };
+  emailConfirmation: {
+    confirmationCode: string;
+    expirationDAte: Date;
+    isConfirmed: boolean;
+  };
+};
+
+export type UserAccountOutType = {
+  id: string;
+  accountData: {
+    userName: string;
+    email: string;
+    created: string;
+  };
+  emailConfirmation: {
+    confirmationCode: string;
+    expirationDAte: Date;
+    isConfirmed: boolean;
+  };
+};

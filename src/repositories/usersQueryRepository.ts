@@ -1,6 +1,10 @@
 import { usersCollection } from "./db";
 import { Pagination } from "../models/commonTypes";
-import { UserDBType, UserOutType, UserSortData } from "../models/usersType";
+import {
+  UserAccountDBType,
+  UserOutType,
+  UserSortData,
+} from "../models/usersType";
 
 export const usersQueryRepository = {
   async getAll(sortData: UserSortData): Promise<Pagination<UserOutType> | {}> {
@@ -14,13 +18,20 @@ export const usersQueryRepository = {
     } = sortData;
 
     const filter = {
-      $or : [
-        { login: { $regex: searchLoginTerm ?? '', $options: 'i'} },
-        { email: { $regex: searchEmailTerm ?? '', $options: 'i'} },
-      ]
-    }
-   
-    const result: UserDBType[] = await usersCollection
+      $or: [
+        {
+          "accountData.userName": {
+            $regex: searchLoginTerm ?? "",
+            $options: "i",
+          },
+        },
+        {
+          "accountData.email": { $regex: searchEmailTerm ?? "", $options: "i" },
+        },
+      ],
+    };
+
+    const result: UserAccountDBType[] = await usersCollection
       .find(filter)
       .sort(sortBy, sortDirection)
       .skip((pageNumber - 1) * pageSize)
@@ -36,18 +47,32 @@ export const usersQueryRepository = {
       pageSize,
       page: pageNumber,
       totalCount,
-      items: result.map(({ _id, login, email, createdAt, hash }) => ({
+      items: result.map(({ _id, accountData }) => ({
         id: _id,
-        login,
-        email,
-        createdAt,
+        login: accountData.userName,
+        email: accountData.email,
+        createdAt: accountData.created,
       })),
     };
   },
 
-  async getByLoginOrEmail (loginOrEmail: string) : Promise<UserDBType | null> {
-    const user : UserDBType | null = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
-    return user
+  async getByLoginOrEmail(
+    loginOrEmail: string
+  ): Promise<UserAccountDBType | null> {
+    const user: UserAccountDBType | null = await usersCollection.findOne({
+      $or: [
+        { "accountData.email": loginOrEmail },
+        { "accountData.login": loginOrEmail },
+      ],
+    });
+    return user;
+  },
 
-  }
+  async findUserCode(code: string): Promise<UserAccountDBType | null> {
+    const user = await usersCollection.findOne({
+      "emailConfirmation.confirmationCode": code,
+    });
+    if (!user) return null;
+    return user;
+  },
 };

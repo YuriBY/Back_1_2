@@ -1,5 +1,5 @@
+import { UserAccountDBType } from "./../models/usersType";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { UserDBType } from "../models/usersType";
 import { appConfig } from "../common/config/appConfi";
 
 const JWT_SECRET = appConfig.SECRET_KEY;
@@ -8,7 +8,7 @@ if (!JWT_SECRET) {
 }
 
 export const jwtService = {
-  async createJWT(user: UserDBType) {
+  async createJWT(user: UserAccountDBType) {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "1h",
     });

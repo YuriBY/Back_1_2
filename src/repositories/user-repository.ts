@@ -1,19 +1,31 @@
-import { UserDBType, UserOutType } from "../models/usersType";
-import { blogsCollection, usersCollection } from "./db";
+import { UserAccountDBType, UserAccountOutType } from "../models/usersType";
+import { usersCollection } from "./db";
 
 export const usersRepository = {
-  userMapper(user: UserDBType): UserOutType {
+  userBigObjMapper(user: UserAccountDBType): UserAccountOutType {
     return {
       id: user._id,
-      login: user.login,
-      email: user.email,
-      createdAt: user.createdAt,
+      accountData: {
+        userName: user.accountData.userName,
+        email: user.accountData.email,
+        created: user.accountData.created,
+      },
+      emailConfirmation: {
+        confirmationCode: user.emailConfirmation.confirmationCode,
+        expirationDAte: user.emailConfirmation.expirationDAte,
+        isConfirmed: user.emailConfirmation.isConfirmed,
+      },
     };
   },
 
-  async createUser(newUser: UserDBType): Promise<UserOutType> {
+  async createUser(newUser: UserAccountDBType): Promise<UserAccountOutType> {
     const result = await usersCollection.insertOne(newUser);
-    return this.userMapper(newUser);
+    return this.userBigObjMapper(newUser);
+  },
+
+  async saveUser(newUser: UserAccountDBType): Promise<UserAccountOutType> {
+    const result = await usersCollection.insertOne(newUser);
+    return this.userBigObjMapper(newUser);
   },
 
   async deleteUser(id: string) {
@@ -21,9 +33,17 @@ export const usersRepository = {
     return result.deletedCount === 1;
   },
 
-  async findUserById(userId: string): Promise<UserDBType | null> {
+  async findUserById(userId: string): Promise<UserAccountDBType | null> {
     const result = await usersCollection.findOne({ _id: userId });
     if (!result) return null;
     return result;
+  },
+
+  async uppdateUser(userId: string): Promise<boolean> {
+    const result = await usersCollection.updateOne(
+      { _id: userId },
+      { $set: { "emailConfirmation.isConfirmed": true } }
+    );
+    return result.modifiedCount === 1;
   },
 };

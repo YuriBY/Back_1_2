@@ -1,24 +1,40 @@
 import crypto from "crypto";
-import { UserDBType, UserOutType, inputUserType } from "../models/usersType";
+import {
+  UserAccountDBType,
+  UserAccountOutType,
+  inputUserType,
+} from "../models/usersType";
 import { bcryprService } from "./bcrypt-service";
 import { usersRepository } from "../repositories/user-repository";
 
 export const userService = {
-  async createUser(createData: inputUserType): Promise<UserOutType | null> {
+  async createUser(
+    createData: inputUserType
+  ): Promise<UserAccountOutType | null> {
     const { login, password, email } = createData;
     const hash = await bcryprService.generateHash(password);
-    const newUser: UserDBType = {
+
+    const newUser: UserAccountDBType = {
       _id: crypto.randomUUID(),
-      login,
-      hash,
-      email,
-      createdAt: new Date().toISOString(),
+      accountData: {
+        userName: login,
+        email: email,
+        passwordHash: hash,
+        created: new Date().toISOString(),
+      },
+      emailConfirmation: {
+        confirmationCode: "",
+        expirationDAte: new Date(),
+        isConfirmed: true,
+      },
     };
-    const createdUser = await usersRepository.createUser(newUser);
+    const createdUser: UserAccountOutType = await usersRepository.createUser(
+      newUser
+    );
     return createdUser;
   },
 
-  async findUserById(userId: string): Promise<UserDBType | null> {
+  async findUserById(userId: string): Promise<UserAccountDBType | null> {
     const foundedUser = await usersRepository.findUserById(userId);
     return foundedUser;
   },

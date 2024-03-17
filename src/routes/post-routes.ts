@@ -119,7 +119,7 @@ postRoute.post(
       postId: req.params.id,
       content: req.body.content,
       userId: req.user!._id,
-      userLogin: req.user!.login,
+      userLogin: req.user!.accountData.userName,
     };
     const newComment: CommentOutType | null = await commentService.sendComment(
       newObjForComment

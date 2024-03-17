@@ -1,7 +1,7 @@
 import { BlogDBType } from "../models/blogsType";
 import { PostDBType } from "./../models/postType";
 import { MongoClient } from "mongodb";
-import { UserDBType } from "../models/usersType";
+import { UserAccountDBType } from "../models/usersType";
 import { appConfig } from "../common/config/appConfi";
 import { CommentDBType } from "../models/comments";
 
@@ -15,7 +15,9 @@ export const client = new MongoClient(mongoURI);
 
 export const blogsCollection = client.db().collection<BlogDBType>("blogs");
 export const postCollection = client.db().collection<PostDBType>("posts");
-export const usersCollection = client.db().collection<UserDBType>("users");
+export const usersCollection = client
+  .db()
+  .collection<UserAccountDBType>("users");
 export const commentsCollection = client
   .db()
   .collection<CommentDBType>("comments");
