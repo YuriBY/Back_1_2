@@ -58,11 +58,10 @@ authRoute.post(
       password: req.body.password,
     };
 
-            
     const isUserEmailExists = await usersQueryRepository.getByLoginOrEmail(
       req.body.email
     );
-   
+
     if (isUserEmailExists) {
       res.status(HTTP_STATUS.BAD_REQUEST_400).send({
         errorsMessages: [
@@ -72,8 +71,8 @@ authRoute.post(
           },
         ],
       });
-      return
-    };
+      return;
+    }
 
     const isUserLoginExists = await usersQueryRepository.getByLoginOrEmail(
       req.body.login
@@ -88,14 +87,14 @@ authRoute.post(
           },
         ],
       });
-      return
+      return;
     }
-      
+
     const user = await authService.createUser(receivedCredential);
-    
+
     if (!user) {
       res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
-      return
+      return;
     }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }
@@ -110,7 +109,9 @@ authRoute.post(
     const result = await authService.confirmEmail(req.body.code);
 
     if (!result) {
-      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
+      res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .send({ errorsMessages: [{ message: "Bad code", field: "code" }] });
       return;
     }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
@@ -124,30 +125,22 @@ authRoute.post(
     req: RequestWithBody<EmailConfirmationResendingType>,
     res: Response
   ) => {
-    console.log('3333');
-    
     const user = await usersQueryRepository.getByLoginOrEmail(req.body.email);
-    console.log(user);
-    
+
     if (!user) {
-      res.sendStatus(HTTP_STATUS.BAD_REQUEST_400);
+      res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .send({ errorsMessages: [{ message: "Bad email", field: "email" }] });
       return;
     }
-    if (!user.emailConfirmation.isConfirmed) {
-      try {
-        await emailAdapter.sendMail(
-          req.body.email,
-          "Resend email",
-          "toResend",
-          user.emailConfirmation.confirmationCode
-        );
-      } catch (error) {
-        console.log(error);
-        
-      }
-      
-      
-    }   
-    res.sendStatus(HTTP_STATUS.NO_CONTENT_204); 
+    if (user.emailConfirmation.isConfirmed) {
+      res
+        .status(HTTP_STATUS.BAD_REQUEST_400)
+        .send({ errorsMessages: [{ message: "Bad email", field: "email" }] });
+      return;
+    } else {
+      const result = await authService.reSendEmail(user);
+      res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+    }
   }
 );

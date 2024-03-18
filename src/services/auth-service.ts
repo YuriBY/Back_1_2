@@ -65,9 +65,8 @@ export const authService = {
       );
     } catch (error) {
       console.log(error);
-      
     }
-    
+
     return createResult;
   },
 
@@ -78,11 +77,39 @@ export const authService = {
     if (user.emailConfirmation.expirationDAte < new Date()) {
       return false;
     }
+    if (user.emailConfirmation.isConfirmed) {
+      return false;
+    }
     const result = usersRepository.uppdateUser(user._id);
     await emailAdapter.sendMail(
       user.accountData.email,
       "Email was verified. Account was activated"
     );
+    return result;
+  },
+
+  async reSendEmail(user: UserAccountDBType): Promise<boolean> {
+    const newCode = uuidv4();
+    const newExperationDate = add(new Date(), {
+      hours: 1,
+      minutes: 3,
+    });
+    const result = usersRepository.uppdateUserCode(
+      user._id,
+      newCode,
+      newExperationDate
+    );
+    try {
+      await emailAdapter.sendMail(
+        user.accountData.email,
+        "Resend email",
+        "toReSend",
+        newCode
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
     return result;
   },
 };

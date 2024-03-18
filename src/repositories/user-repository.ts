@@ -46,4 +46,21 @@ export const usersRepository = {
     );
     return result.modifiedCount === 1;
   },
+
+  async uppdateUserCode(
+    userId: string,
+    code: string,
+    expirationDAte: Date
+  ): Promise<boolean> {
+    const result = await usersCollection.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          "emailConfirmation.confirmationCode": code,
+          "emailCofirmation.expirationDAte": expirationDAte,
+        },
+      }
+    );
+    return result.modifiedCount === 1;
+  },
 };

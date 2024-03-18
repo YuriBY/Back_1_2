@@ -8,6 +8,8 @@ export const emailAdapter = {
     status?: string,
     code?: string
   ) {
+    console.log(email, subject, status, code);
+
     const generateHTML = (
       status?: string,
       code?: string
@@ -18,12 +20,15 @@ export const emailAdapter = {
         <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
         </p>`;
       } else if (status === "toReSend") {
+        console.log("!!!!!!!!!!!!!!");
+
         return `<h1> Input data is accepted.</h1> 
         <p>Email with confirmation code will be send to passed email address. 
         <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
         </p>`;
+      } else {
+        return undefined;
       }
-      return undefined;
     };
 
     let transporter = nodemailer.createTransport({
