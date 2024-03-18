@@ -56,12 +56,18 @@ export const authService = {
     const createResult: UserAccountOutType = await usersRepository.saveUser(
       user
     );
-    await emailAdapter.sendMail(
-      user.accountData.email,
-      "Input data is accepted. Email with confirmation code will be send to passed email address",
-      "toSend",
-      user.emailConfirmation.confirmationCode
-    );
+    try {
+      await emailAdapter.sendMail(
+        user.accountData.email,
+        "Input data is accepted. Email with confirmation code will be send to passed email address",
+        "toSend",
+        user.emailConfirmation.confirmationCode
+      );
+    } catch (error) {
+      console.log(error);
+      
+    }
+    
     return createResult;
   },
 

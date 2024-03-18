@@ -20,5 +20,5 @@ export type CodeConfirmationOfRegistration = {
 };
 
 export type EmailConfirmationResendingType = {
-  emai: string;
+  email: string;
 };
