@@ -59,16 +59,13 @@ export const usersQueryRepository = {
   async getByLoginOrEmail(
     loginOrEmail: string
   ): Promise<UserAccountDBType | null> {
-    console.log(loginOrEmail);
-    
     const user: UserAccountDBType | null = await usersCollection.findOne({
       $or: [
         { "accountData.email": loginOrEmail },
         { "accountData.userName": loginOrEmail },
       ],
     });
-    console.log('1', user);
-     
+
     return user;
   },
 

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 
 export type ParamType = {
   id: string;
@@ -28,4 +29,9 @@ export type SortData = {
 
 export type Content = {
   content: string;
+};
+
+export type RefreshTokenDbType = {
+  _id: ObjectId;
+  refreshToken: string;
 };

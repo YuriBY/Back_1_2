@@ -4,6 +4,7 @@ import { MongoClient } from "mongodb";
 import { UserAccountDBType } from "../models/usersType";
 import { appConfig } from "../common/config/appConfi";
 import { CommentDBType } from "../models/comments";
+import { RefreshTokenType } from "../models/commonTypes";
 
 const mongoURI = appConfig.MONGO_URL;
 
@@ -21,6 +22,10 @@ export const usersCollection = client
 export const commentsCollection = client
   .db()
   .collection<CommentDBType>("comments");
+
+export const refreshTokenCollection = client
+  .db()
+  .collection<RefreshTokenType>("blackList");
 
 export async function runDB() {
   try {

@@ -16,6 +16,7 @@ import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { usersQueryRepository } from "../repositories/usersQueryRepository";
 import { emailValidation, userValidator } from "../validators/user-validators";
 import { emailAdapter } from "../adapters/emailAdapter";
+import { authREfreshJWTMiddlewear } from "../middleweares/auth/authRefreshJWTmiddlewear";
 
 export const authRoute = Router({});
 
@@ -34,8 +35,14 @@ authRoute.post(
       res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
       return;
     }
-    const token = await jwtService.createJWT(user);
-    res.status(HTTP_STATUS.OK_200).send(token.data);
+    const token_A = await jwtService.createJWT_A(user);
+    const token_R = await jwtService.createJWT_R(user);
+
+    res.cookie("cookie_refreshtoken", token_R, {
+      httpOnly: true,
+      secure: true,
+    });
+    res.status(HTTP_STATUS.OK_200).send(token_A.data);
   }
 );
 
@@ -142,5 +149,20 @@ authRoute.post(
       const result = await authService.reSendEmail(user);
       res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
     }
+  }
+);
+
+authRoute.post(
+  "/refresh-token",
+  authREfreshJWTMiddlewear,
+  async (req: Request, res: Response) => {
+    const token_A = await jwtService.createJWT_A(req.user!);
+    const token_R = await jwtService.createJWT_R(req.user!);
+
+    res.cookie("cookie_refreshtoken", token_R, {
+      httpOnly: true,
+      secure: true,
+    });
+    res.status(HTTP_STATUS.OK_200).send(token_A.data);
   }
 );

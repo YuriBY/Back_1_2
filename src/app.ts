@@ -12,11 +12,13 @@ import { authRoute } from "./routes/auth-routes";
 import { userRoute } from "./routes/users-routes";
 import { commentsRoute } from "./routes/comments-routes";
 import { emailRouter } from "./routes/email-routes";
+import cookieParser from "cookie-parser";
 
 export const app = express();
 
 const jsonBodyMiddlewear = express.json();
 app.use(jsonBodyMiddlewear);
+app.use(cookieParser());
 
 app.use("/blogs", blogRoute);
 app.use("/posts", postRoute);
