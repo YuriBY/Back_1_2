@@ -26,7 +26,9 @@ export const authREfreshJWTMiddlewear = async (
     return;
   }
 
-  if (userData.exp * 1000 < new Date().getTime()) {
+  const expireationDate = userData.exp * 1000;
+
+  if (expireationDate < new Date().getTime()) {
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
     return;
   }
@@ -39,7 +41,8 @@ export const authREfreshJWTMiddlewear = async (
     return;
   }
   const result = await jwtQueryRepository.addRefrshTokenInBlackList(
-    cookie_refreshtoken
+    cookie_refreshtoken,
+    expireationDate
   );
   req.user = await userService.findUserById(userData.userId);
   next();

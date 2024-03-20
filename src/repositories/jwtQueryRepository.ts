@@ -4,9 +4,10 @@ import { RefreshTokenDbType } from "../models/commonTypes";
 
 export const jwtQueryRepository = {
   async addRefrshTokenInBlackList(
-    refreshToken: string
+    refreshToken: string,
+    exp: number
   ): Promise<string | null> {
-    const token = await refreshTokenCollection.insertOne({ refreshToken });
+    const token = await refreshTokenCollection.insertOne({ refreshToken, exp });
 
     if (!token) return null;
     return refreshToken;
