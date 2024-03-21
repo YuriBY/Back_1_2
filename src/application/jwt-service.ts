@@ -1,10 +1,6 @@
 import { UserAccountDBType } from "./../models/usersType";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { appConfig } from "../common/config/appConfi";
-import { refreshTokenCollection } from "../repositories/db";
-import { jwtQueryRepository } from "../repositories/jwtQueryRepository";
-import { RefreshTokenDbType } from "../models/commonTypes";
-import crypto from "crypto";
 
 const JWT_SECRET_A = appConfig.SECRET_KEY;
 if (!JWT_SECRET_A) {
@@ -45,7 +41,7 @@ export const jwtService = {
 
   async createJWT_R(user: UserAccountDBType) {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET_R, {
-      expiresIn: "20m",
+      expiresIn: "20s",
     });
     return token;
   },

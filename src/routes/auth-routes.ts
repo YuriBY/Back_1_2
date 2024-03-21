@@ -15,7 +15,6 @@ import { UserAccountDBType, UserAccountOutType } from "../models/usersType";
 import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { usersQueryRepository } from "../repositories/usersQueryRepository";
 import { emailValidation, userValidator } from "../validators/user-validators";
-import { emailAdapter } from "../adapters/emailAdapter";
 import { authREfreshJWTMiddlewear } from "../middleweares/auth/authRefreshJWTmiddlewear";
 
 export const authRoute = Router({});
@@ -164,5 +163,13 @@ authRoute.post(
       secure: true,
     });
     res.status(HTTP_STATUS.OK_200).send(token_A.data);
+  }
+);
+
+authRoute.post(
+  "/logout",
+  authREfreshJWTMiddlewear,
+  async (req: Request, res: Response) => {
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }
 );
