@@ -1,10 +1,11 @@
+import { RefreshTokenDbType } from "./../models/commonTypes";
 import { BlogDBType } from "../models/blogsType";
 import { PostDBType } from "./../models/postType";
 import { MongoClient } from "mongodb";
 import { UserAccountDBType } from "../models/usersType";
 import { appConfig } from "../common/config/appConfi";
 import { CommentDBType } from "../models/comments";
-import { RefreshTokenType } from "../models/commonTypes";
+import { scheduleNextTuesdayEvent } from "../application/clenerOfBlackList";
 
 const mongoURI = appConfig.MONGO_URL;
 
@@ -25,11 +26,11 @@ export const commentsCollection = client
 
 export const refreshTokenCollection = client
   .db()
-  .collection<RefreshTokenType>("blackList");
+  .collection<RefreshTokenDbType>("blackList");
 
 export async function runDB() {
   try {
-    console.log(appConfig.MONGO_URL);
+    scheduleNextTuesdayEvent();
 
     // connect client to server
     await client.connect();

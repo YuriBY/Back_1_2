@@ -34,4 +34,5 @@ export type Content = {
 export type RefreshTokenDbType = {
   _id: ObjectId;
   refreshToken: string;
+  exp: number;
 };

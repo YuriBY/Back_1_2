@@ -7,7 +7,11 @@ export const jwtQueryRepository = {
     refreshToken: string,
     exp: number
   ): Promise<string | null> {
-    const token = await refreshTokenCollection.insertOne({ refreshToken, exp });
+    const token = await refreshTokenCollection.insertOne({
+      _id: new ObjectId(),
+      refreshToken,
+      exp,
+    });
 
     if (!token) return null;
     return refreshToken;
