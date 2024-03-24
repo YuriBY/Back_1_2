@@ -1,4 +1,8 @@
-import { UserAccountDBType, UserAccountOutType } from "../models/usersType";
+import {
+  UserAccountDBType,
+  UserAccountOutType,
+  UserOutType,
+} from "../models/usersType";
 import { usersCollection } from "./db";
 
 export const usersRepository = {
@@ -18,9 +22,18 @@ export const usersRepository = {
     };
   },
 
-  async createUser(newUser: UserAccountDBType): Promise<UserAccountOutType> {
+  userMapper(user: UserAccountDBType): UserOutType {
+    return {
+      id: user._id,
+      login: user.accountData.userName,
+      email: user.accountData.email,
+      createdAt: user.accountData.created,
+    };
+  },
+
+  async createUser(newUser: UserAccountDBType): Promise<UserOutType> {
     const result = await usersCollection.insertOne(newUser);
-    return this.userBigObjMapper(newUser);
+    return this.userMapper(newUser);
   },
 
   async saveUser(newUser: UserAccountDBType): Promise<UserAccountOutType> {

@@ -43,12 +43,18 @@ export const jwtService = {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET_R, {
       expiresIn: "20s",
     });
+    console.log("createdJWT", token);
+
     return token;
   },
 
   async getUserIdByRefreshToken(token: string) {
     try {
+      console.log("11");
+      console.log(token);
+
       const result = jwt.verify(token, JWT_SECRET_R);
+      console.log("22", result);
 
       if (typeof result === "string") {
         return null;

@@ -37,7 +37,7 @@ authRoute.post(
     const token_A = await jwtService.createJWT_A(user);
     const token_R = await jwtService.createJWT_R(user);
 
-    res.cookie("cookie_refreshtoken", token_R, {
+    res.cookie("refreshToken", token_R, {
       httpOnly: true,
       secure: true,
     });
@@ -158,7 +158,7 @@ authRoute.post(
     const token_A = await jwtService.createJWT_A(req.user!);
     const token_R = await jwtService.createJWT_R(req.user!);
 
-    res.cookie("cookie_refreshtoken", token_R, {
+    res.cookie("refreshToken", token_R, {
       httpOnly: true,
       secure: true,
     });

@@ -73,13 +73,11 @@ userRoute.post(
         ],
       });
 
-    const createdUser: UserAccountOutType | null = await userService.createUser(
-      {
-        login,
-        password,
-        email,
-      }
-    );
+    const createdUser: UserOutType | null = await userService.createUser({
+      login,
+      password,
+      email,
+    });
     res.status(HTTP_STATUS.CREATED_201).send(createdUser);
   }
 );

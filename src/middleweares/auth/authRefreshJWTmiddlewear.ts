@@ -10,7 +10,8 @@ export const authREfreshJWTMiddlewear = async (
   res: Response,
   next: NextFunction
 ) => {
-  const cookie_refreshtoken = req.cookies.cookie_refreshtoken;
+  const cookie_refreshtoken = req.cookies.refreshToken;
+  console.log(cookie_refreshtoken);
 
   if (!cookie_refreshtoken) {
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
@@ -20,6 +21,7 @@ export const authREfreshJWTMiddlewear = async (
   const userData = await jwtService.getUserIdByRefreshToken(
     cookie_refreshtoken
   );
+  console.log(userData);
 
   if (!userData || !userData.userId || !userData.exp) {
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);

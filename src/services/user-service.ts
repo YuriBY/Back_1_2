@@ -2,15 +2,14 @@ import crypto from "crypto";
 import {
   UserAccountDBType,
   UserAccountOutType,
+  UserOutType,
   inputUserType,
 } from "../models/usersType";
 import { bcryprService } from "./bcrypt-service";
 import { usersRepository } from "../repositories/user-repository";
 
 export const userService = {
-  async createUser(
-    createData: inputUserType
-  ): Promise<UserAccountOutType | null> {
+  async createUser(createData: inputUserType): Promise<UserOutType | null> {
     const { login, password, email } = createData;
     const hash = await bcryprService.generateHash(password);
 
@@ -28,9 +27,7 @@ export const userService = {
         isConfirmed: true,
       },
     };
-    const createdUser: UserAccountOutType = await usersRepository.createUser(
-      newUser
-    );
+    const createdUser: UserOutType = await usersRepository.createUser(newUser);
     return createdUser;
   },
 
