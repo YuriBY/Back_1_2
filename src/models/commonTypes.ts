@@ -36,3 +36,10 @@ export type RefreshTokenDbType = {
   refreshToken: string;
   exp: number;
 };
+
+export type IPandURLDbType = {
+  _id: ObjectId;
+  ip: string;
+  URL: string;
+  date: Date;
+};

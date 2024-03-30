@@ -10,7 +10,6 @@ import {
   RequestWithQuery,
 } from "../models/commonTypes";
 import {
-  UserAccountOutType,
   UserOutType,
   UserQueryInputType,
   UserSortData,
@@ -18,6 +17,8 @@ import {
 } from "../models/usersType";
 import { userService } from "../services/user-service";
 import { usersQueryRepository } from "../repositories/usersQueryRepository";
+import { logsRepository } from "../repositories/logsRepository";
+import { amountOfRequests } from "../middleweares/amountOfRequests/amountOfRequests-middlewear";
 
 export const userRoute = Router({});
 
@@ -44,6 +45,7 @@ userRoute.get(
 userRoute.post(
   "/",
   authMiddlewear,
+  // amountOfRequests,
   userValidator(),
   async (req: RequestWithBody<inputUserType>, res: Response) => {
     const { login, password, email } = req.body;
@@ -51,7 +53,7 @@ userRoute.post(
     const isUserLoginExists = await usersQueryRepository.getByLoginOrEmail(
       req.body.login
     );
-    if (isUserLoginExists)
+    if (isUserLoginExists) {
       res.status(HTTP_STATUS.BAD_REQUEST_400).send({
         errorsMessages: [
           {
@@ -60,10 +62,13 @@ userRoute.post(
           },
         ],
       });
+      return;
+    }
+
     const isUserEmailExists = await usersQueryRepository.getByLoginOrEmail(
       req.body.email
     );
-    if (isUserEmailExists)
+    if (isUserEmailExists) {
       res.status(HTTP_STATUS.BAD_REQUEST_400).send({
         errorsMessages: [
           {
@@ -72,6 +77,8 @@ userRoute.post(
           },
         ],
       });
+      return;
+    }
 
     const createdUser: UserOutType | null = await userService.createUser({
       login,
