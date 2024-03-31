@@ -13,6 +13,7 @@ import { userRoute } from "./routes/users-routes";
 import { commentsRoute } from "./routes/comments-routes";
 import { emailRouter } from "./routes/email-routes";
 import cookieParser from "cookie-parser";
+import { devicesRoute } from "./routes/devices-routes";
 
 export const app = express();
 
@@ -26,6 +27,7 @@ app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/comments", commentsRoute);
 app.use("/email", emailRouter);
+app.use("/security/devices", devicesRoute);
 
 app.delete("/testing/all-data", (req: Request, res: Response) => {
   blogsCollection.deleteMany({});

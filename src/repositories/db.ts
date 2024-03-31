@@ -1,4 +1,8 @@
-import { IPandURLDbType, RefreshTokenDbType } from "./../models/commonTypes";
+import {
+  DevicesDbType,
+  IPandURLDbType,
+  RefreshTokenDbType,
+} from "./../models/commonTypes";
 import { BlogDBType } from "../models/blogsType";
 import { PostDBType } from "./../models/postType";
 import { MongoClient } from "mongodb";
@@ -29,6 +33,10 @@ export const refreshTokenCollection = client
   .collection<RefreshTokenDbType>("blackList");
 
 export const logsCollection = client.db().collection<IPandURLDbType>("logs");
+
+export const deviceCollection = client
+  .db()
+  .collection<DevicesDbType>("devices");
 
 export async function runDB() {
   try {

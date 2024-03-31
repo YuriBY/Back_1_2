@@ -43,3 +43,20 @@ export type IPandURLDbType = {
   URL: string;
   date: Date;
 };
+
+export type DevicesDbType = {
+  _id: ObjectId;
+  ip: string;
+  title: string;
+  lastActiveDate: string;
+  deviceId: string;
+  expDate: string;
+  userId: string;
+};
+
+export type DevicesOutType = {
+  ip: string;
+  title: string;
+  lastActiveDate: string;
+  deviceId: string;
+};

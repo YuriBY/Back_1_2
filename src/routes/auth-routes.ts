@@ -16,6 +16,7 @@ import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { usersQueryRepository } from "../repositories/usersQueryRepository";
 import { emailValidation, userValidator } from "../validators/user-validators";
 import { authREfreshJWTMiddlewear } from "../middleweares/auth/authRefreshJWTmiddlewear";
+import { deviceQueryRepository } from "../repositories/deviceQueryRepository";
 
 export const authRoute = Router({});
 
@@ -34,8 +35,18 @@ authRoute.post(
       res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
       return;
     }
+    const clientIp = Array.isArray(req.headers["x-forwarded-for"])
+      ? req.headers["x-forwarded-for"][0]
+      : req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+    const clientTitle = req.headers["user-agent"] || "Unknown device";
+
     const token_A = await jwtService.createJWT_A(user);
-    const token_R = await jwtService.createJWT_R(user);
+    const token_R = await jwtService.createJWT_R(
+      user,
+      clientIp || "noIP",
+      clientTitle
+    );
 
     res.cookie("refreshToken", token_R, {
       httpOnly: true,
@@ -155,8 +166,23 @@ authRoute.post(
   "/refresh-token",
   authREfreshJWTMiddlewear,
   async (req: Request, res: Response) => {
+    console.log("here");
+
+    const clientIp = Array.isArray(req.headers["x-forwarded-for"])
+      ? req.headers["x-forwarded-for"][0]
+      : req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+    const clientTitle = req.headers["user-agent"] || "Unknown device";
+
+    const deviceInfo = await deviceQueryRepository.findDeviceWithUserId(
+      req.user!._id
+    );
+
     const token_A = await jwtService.createJWT_A(req.user!);
-    const token_R = await jwtService.createJWT_R(req.user!);
+    const token_R = await jwtService.updateJWT_R(
+      req.user!,
+      deviceInfo!.deviceId
+    );
 
     res.cookie("refreshToken", token_R, {
       httpOnly: true,
