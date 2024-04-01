@@ -18,6 +18,7 @@ import { devicesRoute } from "./routes/devices-routes";
 export const app = express();
 
 const jsonBodyMiddlewear = express.json();
+app.set("trust proxy", true);
 app.use(jsonBodyMiddlewear);
 app.use(cookieParser());
 

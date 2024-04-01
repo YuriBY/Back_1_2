@@ -17,11 +17,15 @@ import { usersQueryRepository } from "../repositories/usersQueryRepository";
 import { emailValidation, userValidator } from "../validators/user-validators";
 import { authREfreshJWTMiddlewear } from "../middleweares/auth/authRefreshJWTmiddlewear";
 import { deviceQueryRepository } from "../repositories/deviceQueryRepository";
+import { amountOfRequests } from "../middleweares/amountOfRequests/amountOfRequests-middlewear";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { deviceRepository } from "../repositories/deviceRepository";
 
 export const authRoute = Router({});
 
 authRoute.post(
   "/login",
+  amountOfRequests,
   authValidator(),
   async (req: RequestWithBody<AuthBodyType>, res: Response) => {
     const receivedCredential: AuthBodyType = {
@@ -67,6 +71,7 @@ authRoute.get("/me", authJWTMiddlewear, async (req: Request, res: Response) => {
 
 authRoute.post(
   "/registration",
+  amountOfRequests,
   userValidator(),
   async (req: RequestWithBody<AuthRegistrationbBodyType>, res: Response) => {
     const receivedCredential: AuthRegistrationbBodyType = {
@@ -119,6 +124,7 @@ authRoute.post(
 
 authRoute.post(
   "/registration-confirmation",
+  amountOfRequests,
   async (
     req: RequestWithBody<CodeConfirmationOfRegistration>,
     res: Response
@@ -137,6 +143,7 @@ authRoute.post(
 
 authRoute.post(
   "/registration-email-resending",
+  amountOfRequests,
   emailValidation(),
   async (
     req: RequestWithBody<EmailConfirmationResendingType>,
@@ -196,6 +203,14 @@ authRoute.post(
   "/logout",
   authREfreshJWTMiddlewear,
   async (req: Request, res: Response) => {
+    const cookie_refreshtoken = req.cookies.refreshToken;
+    const decoded = jwt.decode(cookie_refreshtoken) as JwtPayload;
+
+    const deletedDevice = await deviceRepository.deleteDevice(
+      decoded.deviceId,
+      decoded.userId
+    );
+
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }
 );

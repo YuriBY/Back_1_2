@@ -10,21 +10,25 @@ export const deviceRepository = {
   },
 
   async deleteDevice(deviceId: string, userId: string): Promise<boolean> {
-    const result = await deviceCollection.deleteOne({ deviceId: deviceId, userId: userId });
+    const result = await deviceCollection.deleteOne({
+      deviceId: deviceId,
+      userId: userId,
+    });
     return result.deletedCount === 1;
   },
 
-  async deleteAllDeviceExceptOne(deviceId: string, userId: string): Promise<number> {
+  async deleteAllDeviceExceptOne(
+    deviceId: string,
+    userId: string
+  ): Promise<number> {
     const filter = {
       userId: userId,
-      deviceId: { $ne: deviceId } 
-
+      deviceId: { $ne: deviceId },
     };
-  
+
     const result = await deviceCollection.deleteMany(filter);
-    return result.deletedCount || 0; 
-  }
-  
+    return result.deletedCount || 0;
+  },
 
   async updateDevice(
     deviceId: string,

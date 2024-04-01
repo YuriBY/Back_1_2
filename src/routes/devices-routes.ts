@@ -1,27 +1,10 @@
 import { Router, Request, Response } from "express";
 import { HTTP_STATUS } from "../status/status1";
-import { authValidator } from "../validators/auth-validator";
-import { authService } from "../services/auth-service";
-import {
-  ParamType,
-  RequestWithBody,
-  RequestWithParams,
-} from "../models/commonTypes";
-import {
-  AuthBodyType,
-  AuthRegistrationbBodyType,
-  AuthUserType,
-  CodeConfirmationOfRegistration,
-  EmailConfirmationResendingType,
-} from "../models/authType";
-import { jwtService } from "../application/jwt-service";
-import { UserAccountDBType, UserAccountOutType } from "../models/usersType";
-import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
-import { usersQueryRepository } from "../repositories/usersQueryRepository";
-import { emailValidation, userValidator } from "../validators/user-validators";
+import { ParamType, RequestWithParams } from "../models/commonTypes";
 import { authREfreshJWTMiddlewear } from "../middleweares/auth/authRefreshJWTmiddlewear";
 import { deviceQueryRepository } from "../repositories/deviceQueryRepository";
 import { deviceRepository } from "../repositories/deviceRepository";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const devicesRoute = Router({});
 
@@ -39,14 +22,19 @@ devicesRoute.delete(
   "/",
   authREfreshJWTMiddlewear,
   async (req: Request, res: Response) => {
+    const cookie_refreshtoken = req.cookies.refreshToken;
+    console.log("qqq", cookie_refreshtoken);
+
+    const decoded = jwt.decode(cookie_refreshtoken) as JwtPayload;
+    console.log("qqq2", decoded);
+
     const result = await deviceRepository.deleteAllDeviceExceptOne(
-      req.user!._id
+      decoded.userId,
+      decoded!.deviceId
     );
-    if (!result) {
-      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
-    } else {
-      res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
-    }
+    console.log("result", result);
+
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }
 );
 
@@ -54,12 +42,24 @@ devicesRoute.delete(
   "/:id",
   authREfreshJWTMiddlewear,
   async (req: RequestWithParams<ParamType>, res: Response) => {
+    const cookie_refreshtoken = req.cookies.refreshToken;
+    const decoded = jwt.decode(cookie_refreshtoken) as JwtPayload;
+
+    const foundDevice = await deviceQueryRepository.findDeviceWithDeviceId(
+      req.params.id
+    );
+
+    if (!foundDevice) {
+      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      return;
+    }
+
     const result = await deviceRepository.deleteDevice(
       req.params.id,
-      req.user!._id
+      decoded.userId
     );
     if (!result) {
-      res.sendStatus(HTTP_STATUS.NOT_FOUND_404);
+      res.sendStatus(HTTP_STATUS.FORBIDDEN_403);
     } else {
       res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
     }
