@@ -18,8 +18,8 @@ export const deviceRepository = {
   },
 
   async deleteAllDeviceExceptOne(
-    deviceId: string,
-    userId: string
+    userId: string, 
+    deviceId: string    
   ): Promise<number> {
     const filter = {
       userId: userId,

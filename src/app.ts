@@ -4,6 +4,7 @@ import { postRoute } from "./routes/post-routes";
 import {
   blogsCollection,
   commentsCollection,
+  logsCollection,
   postCollection,
   usersCollection,
 } from "./repositories/db";
@@ -35,5 +36,6 @@ app.delete("/testing/all-data", (req: Request, res: Response) => {
   postCollection.deleteMany({});
   usersCollection.deleteMany({});
   commentsCollection.deleteMany({});
+  logsCollection.deleteMany({});
   res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });

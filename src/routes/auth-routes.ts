@@ -28,13 +28,16 @@ authRoute.post(
   amountOfRequests,
   authValidator(),
   async (req: RequestWithBody<AuthBodyType>, res: Response) => {
+        
     const receivedCredential: AuthBodyType = {
       loginOrEmail: req.body.loginOrEmail,
       password: req.body.password,
     };
+        
     const user: UserAccountDBType | null = await authService.checkCredential(
       receivedCredential
     );
+        
     if (!user) {
       res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
       return;
@@ -173,8 +176,7 @@ authRoute.post(
   "/refresh-token",
   authREfreshJWTMiddlewear,
   async (req: Request, res: Response) => {
-    console.log("here");
-
+   
     const clientIp = Array.isArray(req.headers["x-forwarded-for"])
       ? req.headers["x-forwarded-for"][0]
       : req.headers["x-forwarded-for"] || req.socket.remoteAddress;

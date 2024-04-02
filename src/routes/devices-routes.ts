@@ -23,17 +23,16 @@ devicesRoute.delete(
   authREfreshJWTMiddlewear,
   async (req: Request, res: Response) => {
     const cookie_refreshtoken = req.cookies.refreshToken;
-    console.log("qqq", cookie_refreshtoken);
+   
 
     const decoded = jwt.decode(cookie_refreshtoken) as JwtPayload;
-    console.log("qqq2", decoded);
+      
 
     const result = await deviceRepository.deleteAllDeviceExceptOne(
       decoded.userId,
-      decoded!.deviceId
+      decoded.deviceId
     );
-    console.log("result", result);
-
+   
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }
 );

@@ -47,6 +47,8 @@ export const usersRepository = {
   },
 
   async findUserById(userId: string): Promise<UserAccountDBType | null> {
+    // console.log('22', userId);
+    
     const result = await usersCollection.findOne({ _id: userId });
     if (!result) return null;
     return result;
