@@ -21,7 +21,7 @@ export const authREfreshJWTMiddlewear = async (
   const userData = await jwtService.getUserIdByRefreshToken(
     cookie_refreshtoken
   );
-  console.log("12", userData);
+  // console.log("12", userData);
 
   if (!userData || !userData.userId || !userData.exp) {
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
@@ -40,7 +40,7 @@ export const authREfreshJWTMiddlewear = async (
     userData.lastActivaDate,
     userData.userId
   );
-  console.log("13", isDeviceDataGood);
+  // console.log("13", isDeviceDataGood);
 
   if (!isDeviceDataGood) {
     res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
@@ -59,7 +59,7 @@ export const authREfreshJWTMiddlewear = async (
   //   expireationDate
   // );
   req.user = await userService.findUserById(userData.userId);
-  console.log("req.user", req.user);
+  // console.log("req.user", req.user);
 
   next();
 };

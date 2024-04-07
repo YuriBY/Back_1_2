@@ -32,10 +32,10 @@ export const userService = {
   },
 
   async findUserById(userId: string): Promise<UserAccountDBType | null> {
-    console.log("14", userId);
+    // console.log("14", userId);
 
     const foundedUser = await usersRepository.findUserById(userId);
-    console.log("15", foundedUser);
+    // console.log("15", foundedUser);
 
     return foundedUser;
   },

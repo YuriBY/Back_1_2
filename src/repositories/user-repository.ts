@@ -48,6 +48,7 @@ export const usersRepository = {
 
   async findUserById(userId: string): Promise<UserAccountDBType | null> {
     const result = await UsersModel.findOne({ _id: userId });
+
     if (!result) return null;
     return result;
   },

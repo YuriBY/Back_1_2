@@ -11,11 +11,12 @@ export const logsRepository = {
       const filter = {
         ip: ip,
         URL: URL,
-        date: { $gte: tenSecondsAgo, $lte: date },
+        date: { $gte: tenSecondsAgo },
       };
 
       const totalCount: number = await LogsModel.countDocuments(filter);
       console.log("tot", totalCount);
+
       return totalCount;
     } catch (error) {
       console.error("Error counting requests:", error);
