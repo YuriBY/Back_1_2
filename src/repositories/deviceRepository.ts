@@ -18,8 +18,8 @@ export const deviceRepository = {
   },
 
   async deleteAllDeviceExceptOne(
-    userId: string, 
-    deviceId: string    
+    userId: string,
+    deviceId: string
   ): Promise<number> {
     const filter = {
       userId: userId,
@@ -37,7 +37,7 @@ export const deviceRepository = {
   ): Promise<boolean> {
     const result = await DevicesModel.updateOne(
       { deviceId: deviceId },
-      { $set: { lastActiveDate: activatedDate, expDate } }
+      { lastActiveDate: activatedDate, expDate }
     );
     return result.matchedCount === 1;
   },

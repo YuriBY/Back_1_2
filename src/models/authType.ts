@@ -22,3 +22,8 @@ export type CodeConfirmationOfRegistration = {
 export type EmailConfirmationResendingType = {
   email: string;
 };
+
+export type EmailRecoveryInputType = {
+  newPassword: string;
+  recoveryCode: string;
+};

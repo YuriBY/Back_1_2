@@ -9,17 +9,24 @@ import {
   AuthUserType,
   CodeConfirmationOfRegistration,
   EmailConfirmationResendingType,
+  EmailRecoveryInputType,
 } from "../models/authType";
 import { jwtService } from "../application/jwt-service";
 import { UserAccountDBType, UserAccountOutType } from "../models/usersType";
 import { authJWTMiddlewear } from "../middleweares/auth/authJWTmiddlewear";
 import { usersQueryRepository } from "../repositories/usersQueryRepository";
-import { emailValidation, userValidator } from "../validators/user-validators";
+import {
+  emailValidation,
+  newPasswordValidation,
+  userValidator,
+} from "../validators/user-validators";
 import { authREfreshJWTMiddlewear } from "../middleweares/auth/authRefreshJWTmiddlewear";
 import { deviceQueryRepository } from "../repositories/deviceQueryRepository";
 import { amountOfRequests } from "../middleweares/amountOfRequests/amountOfRequests-middlewear";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { deviceRepository } from "../repositories/deviceRepository";
+import { bcryprService } from "../services/bcrypt-service";
+import { usersRepository } from "../repositories/user-repository";
 
 export const authRoute = Router({});
 
@@ -28,16 +35,15 @@ authRoute.post(
   amountOfRequests,
   authValidator(),
   async (req: RequestWithBody<AuthBodyType>, res: Response) => {
-        
     const receivedCredential: AuthBodyType = {
       loginOrEmail: req.body.loginOrEmail,
       password: req.body.password,
     };
-        
+
     const user: UserAccountDBType | null = await authService.checkCredential(
       receivedCredential
     );
-        
+
     if (!user) {
       res.sendStatus(HTTP_STATUS.UNAUTHORIZED_401);
       return;
@@ -176,7 +182,6 @@ authRoute.post(
   "/refresh-token",
   authREfreshJWTMiddlewear,
   async (req: Request, res: Response) => {
-   
     const clientIp = Array.isArray(req.headers["x-forwarded-for"])
       ? req.headers["x-forwarded-for"][0]
       : req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -213,6 +218,57 @@ authRoute.post(
       decoded.userId
     );
 
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+  }
+);
+
+authRoute.post(
+  "/password-recovery",
+  amountOfRequests,
+  emailValidation(),
+  async (
+    req: RequestWithBody<EmailConfirmationResendingType>,
+    res: Response
+  ) => {
+    const user = await usersQueryRepository.getByLoginOrEmail(req.body.email);
+    console.log("PR", user);
+
+    if (user) {
+      const result = await authService.recoveryEmail(user);
+
+      const deletedOldPasswordHash = await usersRepository.updatePassword(
+        user._id,
+        ""
+      );
+      console.log("PR2", deletedOldPasswordHash);
+    }
+    res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
+  }
+);
+
+authRoute.post(
+  "/new-password",
+  amountOfRequests,
+  newPasswordValidation(),
+  async (req: RequestWithBody<EmailRecoveryInputType>, res: Response) => {
+    const passwordHash = await bcryprService.generateHash(req.body.newPassword);
+    const user = await usersQueryRepository.findUserCode(req.body.recoveryCode);
+
+    if (!user) {
+      res.status(HTTP_STATUS.BAD_REQUEST_400).send({
+        errorsMessages: [{ message: "Bad code", field: "recoveryCode" }],
+      });
+      return;
+    }
+
+    const result = await usersRepository.updatePassword(user._id, passwordHash);
+
+    if (!result) {
+      res.status(HTTP_STATUS.BAD_REQUEST_400).send({
+        errorsMessages: [{ message: "Bad code", field: "recoveryCode" }],
+      });
+      return;
+    }
     res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
   }
 );

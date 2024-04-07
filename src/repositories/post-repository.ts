@@ -29,7 +29,7 @@ export const postRepository = {
   ) {
     const result = await PostsModel.updateOne(
       { _id: id },
-      { $set: { title, shortDescription, content, blogId } }
+      { title, shortDescription, content, blogId }
     );
     return result.matchedCount === 1;
   },

@@ -23,7 +23,7 @@ export const commentRepository = {
   async updateComment(commentId: string, content: string) {
     const result = await CommentsModel.updateOne(
       { _id: commentId },
-      { $set: { content } }
+      { content }
     );
     return result.matchedCount === 1;
   },

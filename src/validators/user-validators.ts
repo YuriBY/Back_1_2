@@ -28,3 +28,13 @@ export const emailValidation = () => [
   emailValidator,
   inputValidationMiddleware,
 ];
+
+const newPasswordValidator = body("newPassword")
+  .trim()
+  .isLength({ min: 6, max: 20 })
+  .withMessage("Incorrect password");
+
+export const newPasswordValidation = () => [
+  newPasswordValidator,
+  inputValidationMiddleware,
+];

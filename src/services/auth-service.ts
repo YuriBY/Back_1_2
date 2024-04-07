@@ -19,11 +19,10 @@ export const authService = {
     receivedCredential: AuthBodyType
   ): Promise<UserAccountDBType | null> {
     const { loginOrEmail, password } = receivedCredential;
-     
+
     const user: UserAccountDBType | null =
       await usersQueryRepository.getByLoginOrEmail(loginOrEmail);
-    
-    
+
     if (!user || !user.emailConfirmation.isConfirmed) return null;
     const checkPass = await bcryprService.checkPassword(
       password,
@@ -59,14 +58,16 @@ export const authService = {
     const createResult: UserAccountOutType = await usersRepository.saveUser(
       user
     );
-    
-      const promise = emailAdapter.sendMail(
+
+    const promise = emailAdapter
+      .sendMail(
         user.accountData.email,
         "Input data is accepted. Email with confirmation code will be send to passed email address",
         "toSend",
         user.emailConfirmation.confirmationCode
-      ).catch((error) => console.log(error));
-    
+      )
+      .catch((error) => console.log(error));
+
     return createResult;
   },
 
@@ -99,14 +100,28 @@ export const authService = {
       newCode,
       newExperationDate
     );
-   emailAdapter.sendMail(
-        user.accountData.email,
-        "Resend email",
-        "toReSend",
-        newCode
-      ).catch((error) => console.log(error));
-      
-    
+    emailAdapter
+      .sendMail(user.accountData.email, "Resend email", "toReSend", newCode)
+      .catch((error) => console.log(error));
+
+    return result;
+  },
+
+  async recoveryEmail(user: UserAccountDBType): Promise<boolean> {
+    const newCode = uuidv4();
+    const newExperationDate = add(new Date(), {
+      hours: 1,
+      minutes: 3,
+    });
+    const result = usersRepository.uppdateUserCode(
+      user._id,
+      newCode,
+      newExperationDate
+    );
+    emailAdapter
+      .sendMail(user.accountData.email, "Recovery email", "toRecover", newCode)
+      .catch((error) => console.log(error));
+
     return result;
   },
 };

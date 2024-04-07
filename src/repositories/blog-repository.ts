@@ -38,7 +38,7 @@ export const blogRepository = {
   ) {
     const result = await BlogsModel.updateOne(
       { _id: id },
-      { $set: { name, description, websiteUrl } }
+      { name, description, websiteUrl }
     );
     return result.matchedCount === 1;
   },
