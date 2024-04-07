@@ -2,10 +2,10 @@ import express, { Request, Response } from "express";
 import { blogRoute } from "./routes/blog-routes";
 import { postRoute } from "./routes/post-routes";
 import {
-  blogsCollection,
-  commentsCollection,
-  postCollection,
-  usersCollection,
+  BlogsModel,
+  CommentsModel,
+  PostsModel,
+  UsersModel,
 } from "./repositories/db";
 import { HTTP_STATUS } from "./status/status1";
 import { authRoute } from "./routes/auth-routes";
@@ -31,9 +31,9 @@ app.use("/email", emailRouter);
 app.use("/security/devices", devicesRoute);
 
 app.delete("/testing/all-data", (req: Request, res: Response) => {
-  blogsCollection.deleteMany({});
-  postCollection.deleteMany({});
-  usersCollection.deleteMany({});
-  commentsCollection.deleteMany({});
+  BlogsModel.deleteMany({});
+  PostsModel.deleteMany({});
+  UsersModel.deleteMany({});
+  CommentsModel.deleteMany({});
   res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });

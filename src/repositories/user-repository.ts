@@ -3,7 +3,7 @@ import {
   UserAccountOutType,
   UserOutType,
 } from "../models/usersType";
-import { usersCollection } from "./db";
+import { UsersModel } from "./db";
 
 export const usersRepository = {
   userBigObjMapper(user: UserAccountDBType): UserAccountOutType {
@@ -32,28 +32,28 @@ export const usersRepository = {
   },
 
   async createUser(newUser: UserAccountDBType): Promise<UserOutType> {
-    const result = await usersCollection.insertOne(newUser);
+    const result = await UsersModel.insertMany([newUser]);
     return this.userMapper(newUser);
   },
 
   async saveUser(newUser: UserAccountDBType): Promise<UserAccountOutType> {
-    const result = await usersCollection.insertOne(newUser);
+    const result = await UsersModel.insertMany([newUser]);
     return this.userBigObjMapper(newUser);
   },
 
   async deleteUser(id: string) {
-    const result = await usersCollection.deleteOne({ _id: id });
+    const result = await UsersModel.deleteOne({ _id: id });
     return result.deletedCount === 1;
   },
 
   async findUserById(userId: string): Promise<UserAccountDBType | null> {
-    const result = await usersCollection.findOne({ _id: userId });
+    const result = await UsersModel.findOne({ _id: userId });
     if (!result) return null;
     return result;
   },
 
   async uppdateUser(userId: string): Promise<boolean> {
-    const result = await usersCollection.updateOne(
+    const result = await UsersModel.updateOne(
       { _id: userId },
       { $set: { "emailConfirmation.isConfirmed": true } }
     );
@@ -65,7 +65,7 @@ export const usersRepository = {
     code: string,
     expirationDAte: Date
   ): Promise<boolean> {
-    const result = await usersCollection.updateOne(
+    const result = await UsersModel.updateOne(
       { _id: userId },
       {
         $set: {

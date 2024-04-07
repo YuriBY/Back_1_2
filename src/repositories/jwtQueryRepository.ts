@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { deviceCollection, refreshTokenCollection } from "./db";
+import { DevicesModel } from "./db";
 import { DevicesDbType, RefreshTokenDbType } from "../models/commonTypes";
 
 export const jwtQueryRepository = {

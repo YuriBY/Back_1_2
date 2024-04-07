@@ -2,18 +2,9 @@ import { blogQueryRepository } from "./../repositories/blogQueryRepository";
 import { PostCreateType, PostDBType, PostOutType } from "../models/postType";
 import crypto from "crypto";
 import { postRepository } from "../repositories/post-repository";
-import { blogsCollection } from "../repositories/db";
 import { BlogOutputType } from "../models/blogsType";
 
 export const postService = {
-  // async getAll() {
-  //   return await postRepository.getAll();
-  // },
-
-  // async getById(id: string): Promise<PostOutType | null> {
-  //   return postRepository.getById(id);
-  // },
-
   postMapper(post: PostDBType): PostOutType {
     return {
       id: post._id,

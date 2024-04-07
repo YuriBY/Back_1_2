@@ -1,19 +1,18 @@
 import { Pagination, SortData } from "../models/commonTypes";
 import { PostDBType, PostOutType } from "../models/postType";
-import { postCollection } from "./db";
+import { PostsModel } from "./db";
 
 export const postQueryRepository = {
   async getAll(sortdata: SortData) {
     const { pageNumber, pageSize, sortBy, sortDirection } = sortdata;
 
-    const posts: PostDBType[] = await postCollection
-      .find({})
-      .sort(sortBy, sortDirection)
+    const posts: PostDBType[] = await PostsModel.find({})
+      .sort({ sortBy: sortDirection })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await postCollection.countDocuments({});
+    const totalCount = await PostsModel.countDocuments({});
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     if (!posts) return [];
@@ -27,7 +26,7 @@ export const postQueryRepository = {
   },
 
   async getById(id: string): Promise<PostOutType | null> {
-    const result: PostDBType | null = await postCollection.findOne({ _id: id });
+    const result: PostDBType | null = await PostsModel.findOne({ _id: id });
     if (!result) return null;
     return this.postMapper(result);
   },
@@ -46,14 +45,13 @@ export const postQueryRepository = {
         },
       };
     }
-    const result: PostDBType[] = await postCollection
-      .find(filter)
-      .sort(sortBy, sortDirection)
+    const result: PostDBType[] = await PostsModel.find(filter)
+      .sort({ sortBy: sortDirection })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await postCollection.countDocuments(filter);
+    const totalCount = await PostsModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     if (!result.length) return {};

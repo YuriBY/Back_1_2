@@ -3,7 +3,7 @@ import {
   BlogDBType,
   BlogOutputType,
 } from "../models/blogsType";
-import { blogsCollection } from "./db";
+import { BlogsModel } from "./db";
 
 export const blogRepository = {
   // async getById(id: string): Promise<BlogDBType | null> {
@@ -26,7 +26,7 @@ export const blogRepository = {
   },
 
   async createBlog(newBlog: BlogDBType): Promise<BlogOutputType> {
-    const result = await blogsCollection.insertOne(newBlog);
+    const result = await BlogsModel.insertMany([newBlog]);
     return this.blogMapper(newBlog);
   },
 
@@ -36,7 +36,7 @@ export const blogRepository = {
     description: string,
     websiteUrl: string
   ) {
-    const result = await blogsCollection.updateOne(
+    const result = await BlogsModel.updateOne(
       { _id: id },
       { $set: { name, description, websiteUrl } }
     );
@@ -44,7 +44,7 @@ export const blogRepository = {
   },
 
   async deleteBlog(id: string) {
-    const result = await blogsCollection.deleteOne({ _id: id });
+    const result = await BlogsModel.deleteOne({ _id: id });
     return result.deletedCount === 1;
   },
 };

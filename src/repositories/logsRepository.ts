@@ -1,4 +1,4 @@
-import { logsCollection } from "./db";
+import { LogsModel } from "./db";
 import { IPandURLDbType } from "../models/commonTypes";
 import { addSeconds } from "date-fns";
 
@@ -14,7 +14,7 @@ export const logsRepository = {
         date: { $gte: tenSecondsAgo, $lte: date },
       };
 
-      const totalCount: number = await logsCollection.countDocuments(filter);
+      const totalCount: number = await LogsModel.countDocuments(filter);
       console.log("tot", totalCount);
       return totalCount;
     } catch (error) {
@@ -24,7 +24,7 @@ export const logsRepository = {
   },
 
   async saveToDb(requestData: IPandURLDbType): Promise<IPandURLDbType> {
-    const result = await logsCollection.insertOne(requestData);
+    const result = await LogsModel.insertMany([requestData]);
     return requestData;
   },
 };

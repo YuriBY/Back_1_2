@@ -1,5 +1,5 @@
 import { BlogDBType, BlogOutputType } from "../models/blogsType";
-import { blogsCollection } from "./db";
+import { BlogsModel } from "./db";
 import { Pagination, SortData } from "../models/commonTypes";
 
 export const blogQueryRepository = {
@@ -16,14 +16,13 @@ export const blogQueryRepository = {
         },
       };
     }
-    const result: BlogDBType[] = await blogsCollection
-      .find(filter)
-      .sort(sortBy, sortDirection)
+    const result: BlogDBType[] = await BlogsModel.find(filter)
+      .sort({ sortBy: sortDirection })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await blogsCollection.countDocuments(filter);
+    const totalCount = await BlogsModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     if (!result) return [];
@@ -48,7 +47,7 @@ export const blogQueryRepository = {
   },
 
   async getById(id: string): Promise<BlogOutputType | null> {
-    const result: BlogDBType | null = await blogsCollection.findOne({
+    const result: BlogDBType | null = await BlogsModel.findOne({
       _id: id,
     });
     if (!result) return null;

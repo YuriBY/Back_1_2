@@ -1,9 +1,9 @@
-import { deviceCollection } from "./db";
+import { DevicesModel } from "./db";
 import { DevicesDbType, DevicesOutType } from "../models/commonTypes";
 
 export const deviceQueryRepository = {
   async getAll(userId: string): Promise<DevicesOutType[] | null> {
-    const result = await deviceCollection.find({ userId: userId }).toArray();
+    const result = await DevicesModel.find({ userId: userId }).lean();
     return result.map(({ ip, title, lastActiveDate, deviceId }) => ({
       ip,
       title,
@@ -24,9 +24,7 @@ export const deviceQueryRepository = {
         userId: userId,
       };
 
-      const result: DevicesDbType | null = await deviceCollection.findOne(
-        filter
-      );
+      const result: DevicesDbType | null = await DevicesModel.findOne(filter);
 
       return result;
     } catch (error) {
@@ -36,14 +34,14 @@ export const deviceQueryRepository = {
   },
 
   async findDeviceWithUserId(userId: string): Promise<DevicesDbType | null> {
-    const result = await deviceCollection.findOne({ userId: userId });
+    const result = await DevicesModel.findOne({ userId: userId });
     return result;
   },
 
   async findDeviceWithDeviceId(
     deviceId: string
   ): Promise<DevicesDbType | null> {
-    const result = await deviceCollection.findOne({ deviceId: deviceId });
+    const result = await DevicesModel.findOne({ deviceId: deviceId });
     return result;
   },
 };

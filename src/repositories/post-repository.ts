@@ -1,20 +1,8 @@
 import { PostCreateType, PostDBType, PostOutType } from "../models/postType";
-import { postCollection } from "./db";
+import { PostsModel } from "./db";
 import crypto from "crypto";
 
 export const postRepository = {
-  // async getAll() {
-  //   const result: PostDBType[] = await postCollection.find({}).toArray();
-  //   if (!result) return [];
-  //   return result.map(({ _id, ...rest }) => ({ id: _id, ...rest }));
-  // },
-
-  // async getById(id: string): Promise<PostOutType | null> {
-  //   const result: PostDBType | null = await postCollection.findOne({ _id: id });
-  //   if (!result) return null;
-  //   return this.postMapper(result);
-  // },
-
   postMapper(post: PostDBType): PostOutType {
     return {
       id: post._id,
@@ -28,7 +16,7 @@ export const postRepository = {
   },
 
   async createPost(newPost: PostDBType): Promise<PostOutType> {
-    const result = await postCollection.insertOne(newPost);
+    const result = await PostsModel.insertMany([newPost]);
     return this.postMapper(newPost);
   },
 
@@ -39,7 +27,7 @@ export const postRepository = {
     content: string,
     blogId: string
   ) {
-    const result = await postCollection.updateOne(
+    const result = await PostsModel.updateOne(
       { _id: id },
       { $set: { title, shortDescription, content, blogId } }
     );
@@ -47,7 +35,7 @@ export const postRepository = {
   },
 
   async deletePost(id: string) {
-    const result = await postCollection.deleteOne({ _id: id });
+    const result = await PostsModel.deleteOne({ _id: id });
     return result.deletedCount === 1;
   },
 };

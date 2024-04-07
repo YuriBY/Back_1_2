@@ -1,4 +1,4 @@
-import { usersCollection } from "./db";
+import { UsersModel } from "./db";
 import { Pagination } from "../models/commonTypes";
 import {
   UserAccountDBType,
@@ -31,14 +31,13 @@ export const usersQueryRepository = {
       ],
     };
 
-    const result: UserAccountDBType[] = await usersCollection
-      .find(filter)
-      .sort(sortBy, sortDirection)
+    const result: UserAccountDBType[] = await UsersModel.find(filter)
+      .sort({ sortBy: sortDirection })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await usersCollection.countDocuments(filter);
+    const totalCount = await UsersModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     if (!result) return [];
@@ -59,7 +58,7 @@ export const usersQueryRepository = {
   async getByLoginOrEmail(
     loginOrEmail: string
   ): Promise<UserAccountDBType | null> {
-    const user: UserAccountDBType | null = await usersCollection.findOne({
+    const user: UserAccountDBType | null = await UsersModel.findOne({
       $or: [
         { "accountData.email": loginOrEmail },
         { "accountData.userName": loginOrEmail },
@@ -70,7 +69,7 @@ export const usersQueryRepository = {
   },
 
   async findUserCode(code: string): Promise<UserAccountDBType | null> {
-    const user = await usersCollection.findOne({
+    const user = await UsersModel.findOne({
       "emailConfirmation.confirmationCode": code,
     });
     if (!user) return null;

@@ -1,20 +1,8 @@
 import { CommentOutType } from "./../models/comments";
 import { CommentDBType } from "../models/comments";
-import { commentsCollection } from "./db";
+import { CommentsModel } from "./db";
 
 export const commentRepository = {
-  // async getAll() {
-  //   const result: PostDBType[] = await postCollection.find({}).toArray();
-  //   if (!result) return [];
-  //   return result.map(({ _id, ...rest }) => ({ id: _id, ...rest }));
-  // },
-
-  // async getById(id: string): Promise<PostOutType | null> {
-  //   const result: PostDBType | null = await postCollection.findOne({ _id: id });
-  //   if (!result) return null;
-  //   return this.postMapper(result);
-  // },
-
   commentMapper(comment: CommentDBType): CommentOutType {
     return {
       id: comment._id,
@@ -28,12 +16,12 @@ export const commentRepository = {
   },
 
   async createComment(newComment: CommentDBType): Promise<CommentOutType> {
-    const result = await commentsCollection.insertOne(newComment);
+    const result = await CommentsModel.insertMany({ newComment });
     return this.commentMapper(newComment);
   },
 
   async updateComment(commentId: string, content: string) {
-    const result = await commentsCollection.updateOne(
+    const result = await CommentsModel.updateOne(
       { _id: commentId },
       { $set: { content } }
     );
@@ -41,7 +29,7 @@ export const commentRepository = {
   },
 
   async deleteComment(id: string) {
-    const result = await commentsCollection.deleteOne({ _id: id });
+    const result = await CommentsModel.deleteOne({ _id: id });
     return result.deletedCount === 1;
   },
 };

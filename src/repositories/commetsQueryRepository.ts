@@ -1,4 +1,4 @@
-import { commentsCollection } from "./db";
+import { CommentsModel } from "./db";
 import { Pagination } from "../models/commonTypes";
 import {
   CommentDBType,
@@ -18,14 +18,13 @@ export const commentsQueryRepository = {
       "commentatorInfo.postId": postId,
     };
 
-    const result: CommentDBType[] = await commentsCollection
-      .find(filter)
-      .sort(sortBy, sortDirection)
+    const result: CommentDBType[] = await CommentsModel.find(filter)
+      .sort({ sortBy: sortDirection })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await commentsCollection.countDocuments(filter);
+    const totalCount = await CommentsModel.countDocuments(filter);
     const pagesCount = Math.ceil(totalCount / pageSize);
 
     if (!result)
@@ -66,7 +65,7 @@ export const commentsQueryRepository = {
   },
 
   async getById(id: string): Promise<CommentOutType | null> {
-    const result: CommentDBType | null = await commentsCollection.findOne({
+    const result: CommentDBType | null = await CommentsModel.findOne({
       _id: id,
     });
     if (!result) return null;
@@ -74,7 +73,7 @@ export const commentsQueryRepository = {
   },
 
   async findDbTypeById(id: string): Promise<CommentDBType | Result> {
-    const result: CommentDBType | null = await commentsCollection.findOne({
+    const result: CommentDBType | null = await CommentsModel.findOne({
       _id: id,
     });
     if (!result)
