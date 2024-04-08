@@ -22,12 +22,8 @@ export const amountOfRequests = async (
     date: new Date(),
   };
 
-  console.log('requestData', requestData);
-  
-
   const result: number = await logsRepository.countRequests(requestData);
-  console.log('result', result);
-  
+    
   const savedData = await logsRepository.saveToDb(requestData);
 
   if (!savedData) {

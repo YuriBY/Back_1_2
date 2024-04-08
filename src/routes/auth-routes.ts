@@ -230,6 +230,8 @@ authRoute.post(
     req: RequestWithBody<EmailConfirmationResendingType>,
     res: Response
   ) => {
+    console.log('11');
+    
     const user = await usersQueryRepository.getByLoginOrEmail(req.body.email);
     console.log("PR", user);
 

@@ -15,8 +15,7 @@ export const logsRepository = {
       };
 
       const totalCount: number = await LogsModel.countDocuments(filter);
-      console.log("tot", totalCount);
-
+      
       return totalCount;
     } catch (error) {
       console.error("Error counting requests:", error);

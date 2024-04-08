@@ -15,6 +15,7 @@ import { emailRouter } from "./routes/email-routes";
 import cookieParser from "cookie-parser";
 import { devicesRoute } from "./routes/devices-routes";
 
+
 export const app = express();
 
 const jsonBodyMiddlewear = express.json();
@@ -30,10 +31,13 @@ app.use("/comments", commentsRoute);
 app.use("/email", emailRouter);
 app.use("/security/devices", devicesRoute);
 
-app.delete("/testing/all-data", (req: Request, res: Response) => {
-  BlogsModel.deleteMany({});
-  PostsModel.deleteMany({});
-  UsersModel.deleteMany({});
-  CommentsModel.deleteMany({});
+
+app.delete("/testing/all-data", async (req: Request, res: Response) => {
+  console.log('xxxxxxx');
+  
+  await BlogsModel.deleteMany({});
+  await PostsModel.deleteMany({});
+  await UsersModel.deleteMany({});
+  await CommentsModel.deleteMany({});
   res.sendStatus(HTTP_STATUS.NO_CONTENT_204);
 });
