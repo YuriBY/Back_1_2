@@ -76,58 +76,59 @@ export const usersRepository = {
     return result.modifiedCount === 1;
   },
 
-  //   async updatePassword(userId: string, passwordHash: string): Promise<boolean> {
-  //     try {
-  //         const userInstance: UserAccountDBType | null = await UsersModel.findOne({ _id: userId });
+    async updatePassword(userId: string, passwordHash: string): Promise<boolean> {
+      try {
+          const userInstance = await UsersModel.findOne({ _id: userId });
 
-  //         if (!userInstance) {
-  //             console.log('Пользователь с идентификатором', userId, 'не найден.');
-  //             return false;
-  //         }
+          if (!userInstance) {
+              console.log('Пользователь с идентификатором', userId, 'не найден.');
+              return false;
+          }
 
-  //         userInstance.accountData.passwordHash = passwordHash;
-  //         const result = await userInstance.save();
+          userInstance.accountData.passwordHash = passwordHash;
+          // userInstance.markModified('accountData.passwordHash')
+          const result = await userInstance.save();
 
-  //         if (result) {
-  //             console.log('Пароль пользователя с идентификатором', userId, 'успешно обновлен.');
-  //             return true;
-  //         } else {
-  //             console.log('Не удалось обновить пароль пользователя с идентификатором', userId);
-  //             return false;
-  //         }
-  //     } catch (error) {
-  //         console.error('Произошла ошибка при обновлении пароля пользователя:', error);
-  //         return false;
-  //     }
-  // }
-
-  async updatePassword(userId: string, passwordHash: string): Promise<boolean> {
-    try {
-      const result = await UsersModel.findOneAndUpdate(
-        { _id: userId },
-        { "accountData.passwordHash": passwordHash }
-      );
-
-      if (result) {
-        console.log(
-          "Пароль пользователя с идентификатором",
-          userId,
-          "успешно обновлен."
-        );
-        return true;
-      } else {
-        console.log(
-          "Не удалось обновить пароль пользователя с идентификатором",
-          userId
-        );
-        return false;
+          if (result) {
+              console.log('Пароль пользователя с идентификатором', userId, 'успешно обновлен.');
+              return true;
+          } else {
+              console.log('Не удалось обновить пароль пользователя с идентификатором', userId);
+              return false;
+          }
+      } catch (error) {
+          console.error('Произошла ошибка при обновлении пароля пользователя:', error);
+          return false;
       }
-    } catch (error) {
-      console.error(
-        "Произошла ошибка при обновлении пароля пользователя:",
-        error
-      );
-      return false;
-    }
-  },
+  }
+
+  // async updatePassword(userId: string, passwordHash: string): Promise<boolean> {
+  //   try {
+  //     const result = await UsersModel.findOneAndUpdate(
+  //       { _id: userId },
+  //       { "accountData.passwordHash": passwordHash }
+  //     );
+
+  //     if (result) {
+  //       console.log(
+  //         "Пароль пользователя с идентификатором",
+  //         userId,
+  //         "успешно обновлен."
+  //       );
+  //       return true;
+  //     } else {
+  //       console.log(
+  //         "Не удалось обновить пароль пользователя с идентификатором",
+  //         userId
+  //       );
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error(
+  //       "Произошла ошибка при обновлении пароля пользователя:",
+  //       error
+  //     );
+  //     return false;
+  //   }
+  // },
 };
